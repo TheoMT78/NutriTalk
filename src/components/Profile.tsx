@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { User, Settings, Target, Activity, Bell, Palette, Download, Upload } from 'lucide-react';
+import { User as UserIcon, Settings, Target, Activity, Palette, Download, Upload } from 'lucide-react';
+import { User as UserType } from '../types';
 
 interface ProfileProps {
-  user: any;
-  onUpdateUser: (user: any) => void;
+  user: UserType;
+  onUpdateUser: (user: UserType) => void;
 }
 
 const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
@@ -71,7 +72,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
           setFormData(data.profile);
           alert('Profil importé avec succès !');
         }
-      } catch (error) {
+      } catch {
         alert('Erreur lors de l\'importation du fichier');
       }
     };
@@ -108,7 +109,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <User className="text-blue-500" size={24} />
+            <UserIcon className="text-blue-500" size={24} />
             <h3 className="text-lg font-semibold">Informations personnelles</h3>
           </div>
           <button
