@@ -11,6 +11,7 @@ export interface User {
   dailyProtein: number;
   dailyCarbs: number;
   dailyFat: number;
+  stepGoal: number;
   avatar: string;
   theme: 'light' | 'dark' | 'auto';
   notifications: boolean;
@@ -38,6 +39,7 @@ export interface DailyLog {
   totalCarbs: number;
   totalFat: number;
   water: number;
+  steps: number;
 }
 
 export interface FoodItem {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, TrendingUp, Download, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, TrendingUp, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { User } from '../types';
 
 interface HistoryProps {
@@ -206,9 +206,9 @@ const History: React.FC<HistoryProps> = ({ user }) => {
         <h3 className="text-lg font-semibold mb-6">Évolution des calories</h3>
         
         <div className="space-y-4">
-          {historyData.slice(-14).map((day, index) => {
+          {historyData.slice(-14).map((day) => {
             const percentage = (day.calories / user.dailyCalories) * 100;
-            const isOverTarget = day.calories > user.dailyCalories;
+            const withinRange = percentage >= 90 && percentage <= 110;
             
             return (
               <div key={day.date} className="flex items-center space-x-4">
@@ -218,14 +218,14 @@ const History: React.FC<HistoryProps> = ({ user }) => {
                 <div className="flex-1">
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-sm font-medium">{day.calories} kcal</span>
-                    <span className={`text-sm ${isOverTarget ? 'text-red-500' : 'text-green-500'}`}>
+                    <span className={`text-sm ${withinRange ? 'text-green-500' : 'text-red-500'}`}>
                       {percentage.toFixed(0)}%
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div 
+                    <div
                       className={`h-2 rounded-full transition-all duration-300 ${
-                        isOverTarget ? 'bg-red-500' : 'bg-green-500'
+                        withinRange ? 'bg-green-500' : 'bg-red-500'
                       }`}
                       style={{ width: `${Math.min(percentage, 100)}%` }}
                     />

@@ -2,6 +2,7 @@ import React from 'react';
 import { Target, TrendingUp, Droplets, Trash2, Edit3, Coffee, Utensils, Moon as Dinner, Apple } from 'lucide-react';
 import { User, DailyLog } from '../types';
 import MacroChart from './MacroChart';
+import StepProgress from './StepProgress';
 import CalorieProgress from './CalorieProgress';
 
 interface DashboardProps {
@@ -9,13 +10,15 @@ interface DashboardProps {
   dailyLog: DailyLog;
   onRemoveEntry: (id: string) => void;
   onUpdateWater: (amount: number) => void;
+  onUpdateSteps: (amount: number) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ 
-  user, 
-  dailyLog, 
-  onRemoveEntry, 
-  onUpdateWater 
+const Dashboard: React.FC<DashboardProps> = ({
+  user,
+  dailyLog,
+  onRemoveEntry,
+  onUpdateWater,
+  onUpdateSteps
 }) => {
   const getMealIcon = (meal: string) => {
     switch (meal) {
@@ -128,16 +131,22 @@ const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Graphiques */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <CalorieProgress 
-          current={dailyLog.totalCalories} 
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <CalorieProgress
+          current={dailyLog.totalCalories}
           target={user.dailyCalories}
           className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
         />
-        <MacroChart 
+        <MacroChart
           protein={dailyLog.totalProtein}
           carbs={dailyLog.totalCarbs}
           fat={dailyLog.totalFat}
+          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
+        />
+        <StepProgress
+          current={dailyLog.steps}
+          target={user.stepGoal}
+          onUpdate={onUpdateSteps}
           className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
         />
       </div>

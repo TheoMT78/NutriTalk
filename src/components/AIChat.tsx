@@ -198,8 +198,10 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
       setIsListening(true);
     };
 
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const transcript = Array.from(event.results)
+        .map(r => r[0].transcript)
+        .join(' ');
       setInput(transcript);
       setIsListening(false);
     };

@@ -8,24 +8,32 @@ import AIChat from './components/AIChat';
 import FloatingAIButton from './components/FloatingAIButton';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { User, FoodEntry, DailyLog } from './types';
+import { computeDailyTargets } from './utils/nutrition';
 
 function App() {
-  const [user, setUser] = useLocalStorage<User>('nutritalk-user', {
+  const defaultUser = {
     name: 'Utilisateur',
     email: 'user@example.com',
     age: 30,
     weight: 70,
     height: 175,
-    gender: 'homme',
-    activityLevel: 'modérée',
-    goal: 'maintien',
-    dailyCalories: 2000,
-    dailyProtein: 150,
-    dailyCarbs: 250,
-    dailyFat: 65,
+    gender: 'homme' as const,
+    activityLevel: 'modérée' as const,
+    goal: 'maintien' as const,
     avatar: 'https://images.pexels.com/photos/1310474/pexels-photo-1310474.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
-    theme: 'light',
-    notifications: true
+    theme: 'light' as const,
+    notifications: true,
+    stepGoal: 10000
+  };
+
+  const targets = computeDailyTargets(defaultUser);
+
+  const [user, setUser] = useLocalStorage<User>('nutritalk-user', {
+    ...defaultUser,
+    dailyCalories: targets.calories,
+    dailyProtein: targets.protein,
+    dailyCarbs: targets.carbs,
+    dailyFat: targets.fat
   });
 
   const [dailyLog, setDailyLog] = useLocalStorage<DailyLog>('nutritalk-daily-log', {
@@ -35,7 +43,8 @@ function App() {
     totalProtein: 0,
     totalCarbs: 0,
     totalFat: 0,
-    water: 0
+    water: 0,
+    steps: 0
   });
 
   const [currentView, setCurrentView] = useState('dashboard');
@@ -98,10 +107,25 @@ function App() {
     }));
   };
 
+  const updateSteps = (amount: number) => {
+    setDailyLog(prev => ({
+      ...prev,
+      steps: Math.max(0, prev.steps + amount)
+    }));
+  };
+
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
-        return <Dashboard user={user} dailyLog={dailyLog} onRemoveEntry={removeFoodEntry} onUpdateWater={updateWater} />;
+        return (
+          <Dashboard
+            user={user}
+            dailyLog={dailyLog}
+            onRemoveEntry={removeFoodEntry}
+            onUpdateWater={updateWater}
+            onUpdateSteps={updateSteps}
+          />
+        );
       case 'search':
         return <FoodSearch onAddFood={addFoodEntry} />;
       case 'profile':
@@ -109,7 +133,15 @@ function App() {
       case 'history':
         return <History user={user} />;
       default:
-        return <Dashboard user={user} dailyLog={dailyLog} onRemoveEntry={removeFoodEntry} onUpdateWater={updateWater} />;
+        return (
+          <Dashboard
+            user={user}
+            dailyLog={dailyLog}
+            onRemoveEntry={removeFoodEntry}
+            onUpdateWater={updateWater}
+            onUpdateSteps={updateSteps}
+          />
+        );
     }
   };
 
