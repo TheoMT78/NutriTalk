@@ -5,6 +5,8 @@ import MacroChart from './MacroChart';
 import StepProgress from './StepProgress';
 import CalorieProgress from './CalorieProgress';
 
+const CALORIES_PER_STEP = 0.04;
+
 interface DashboardProps {
   user: User;
   dailyLog: DailyLog;
@@ -31,13 +33,16 @@ const Dashboard: React.FC<DashboardProps> = ({
   };
 
   const getGoalMessage = () => {
-    const caloriesRemaining = user.dailyCalories - dailyLog.totalCalories;
+    const stepsCalories = Math.max(0, dailyLog.steps - 4000) * CALORIES_PER_STEP;
+    const caloriesRemaining = user.dailyCalories - dailyLog.totalCalories + stepsCalories;
     if (caloriesRemaining > 0) {
       return `Il vous reste ${caloriesRemaining.toFixed(0)} calories aujourd'hui`;
-    } else {
-      return `Vous avez dépassé votre objectif de ${Math.abs(caloriesRemaining).toFixed(0)} calories`;
     }
+    return `Vous avez dépassé votre objectif de ${Math.abs(caloriesRemaining).toFixed(0)} calories`;
   };
+
+  const stepsCalories = Math.max(0, dailyLog.steps - 4000) * CALORIES_PER_STEP;
+  const caloriesRemaining = user.dailyCalories - dailyLog.totalCalories + stepsCalories;
 
   const groupedEntries = dailyLog.entries.reduce((acc, entry) => {
     if (!acc[entry.meal]) {
@@ -72,11 +77,11 @@ const Dashboard: React.FC<DashboardProps> = ({
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Calories</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Calories consommées</p>
               <p className="text-2xl font-bold text-blue-600">
                 {dailyLog.totalCalories.toFixed(0)}
               </p>
-              <p className="text-sm text-gray-500">/ {user.dailyCalories}</p>
+              <p className="text-sm text-gray-500">reste {caloriesRemaining.toFixed(0)} / {user.dailyCalories}</p>
             </div>
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
               <Target className="text-blue-600 dark:text-blue-400" size={20} />

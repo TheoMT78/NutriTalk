@@ -8,8 +8,12 @@ interface StepProgressProps {
   className?: string;
 }
 
+const CALORIES_PER_STEP = 0.04;
+
 const StepProgress: React.FC<StepProgressProps> = ({ current, target, onUpdate, className = '' }) => {
   const percentage = Math.min((current / target) * 100, 100);
+  const extraSteps = Math.max(0, current - 4000);
+  const caloriesBurned = extraSteps * CALORIES_PER_STEP;
   return (
     <div className={className}>
       <div className="flex items-center justify-between mb-4">
@@ -45,8 +49,29 @@ const StepProgress: React.FC<StepProgressProps> = ({ current, target, onUpdate, 
         </div>
       </div>
       </div>
+      <div className="text-center mt-4 text-sm text-gray-600 dark:text-gray-400">
+        {caloriesBurned.toFixed(0)} kcal brûlées
+      </div>
       {onUpdate && (
-        <div className="flex justify-center space-x-2 mt-4">
+        <div className="flex justify-center space-x-2 mt-2">
+          <button
+            onClick={() => onUpdate(5000)}
+            className="px-3 py-1 text-sm bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors duration-200"
+          >
+            +5000
+          </button>
+          <button
+            onClick={() => onUpdate(2500)}
+            className="px-3 py-1 text-sm bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors duration-200"
+          >
+            +2500
+          </button>
+          <button
+            onClick={() => onUpdate(1000)}
+            className="px-3 py-1 text-sm bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors duration-200"
+          >
+            +1000
+          </button>
           <button
             onClick={() => onUpdate(500)}
             className="px-3 py-1 text-sm bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors duration-200"
@@ -54,10 +79,10 @@ const StepProgress: React.FC<StepProgressProps> = ({ current, target, onUpdate, 
             +500
           </button>
           <button
-            onClick={() => onUpdate(-500)}
+            onClick={() => onUpdate(-1000)}
             className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
           >
-            -500
+            -1000
           </button>
         </div>
       )}
