@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { computeDailyTargets } from '../utils/nutrition';
 import { User as UserIcon, Settings, Target, Activity, Palette, Download, Upload } from 'lucide-react';
 import { User as UserType } from '../types';
 
@@ -12,7 +13,25 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
   const [formData, setFormData] = useState(user);
 
   const handleSave = () => {
-    onUpdateUser(formData);
+    const targets = computeDailyTargets({
+      weight: formData.weight,
+      height: formData.height,
+      age: formData.age,
+      gender: formData.gender,
+      activityLevel: formData.activityLevel,
+      goal: formData.goal,
+    });
+
+    const updated = {
+      ...formData,
+      dailyCalories: targets.calories,
+      dailyProtein: targets.protein,
+      dailyCarbs: targets.carbs,
+      dailyFat: targets.fat,
+    };
+
+    onUpdateUser(updated);
+    setFormData(updated);
     setIsEditing(false);
   };
 
