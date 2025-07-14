@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { User, Settings, Target, Activity, Bell, Palette, Download, Upload } from 'lucide-react';
+import { computeDailyTargets, calculateMacroTargets } from '../utils/nutrition';
+import { User as UserIcon, Settings, Target, Activity, Palette, Download, Upload } from 'lucide-react';
+import { User as UserType } from '../types';
 
 interface ProfileProps {
-  user: any;
-  onUpdateUser: (user: any) => void;
+  user: UserType;
+  onUpdateUser: (user: UserType) => void;
 }
 
 const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
@@ -11,7 +13,34 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
   const [formData, setFormData] = useState(user);
 
   const handleSave = () => {
-    onUpdateUser(formData);
+    const auto = computeDailyTargets({
+      weight: formData.weight,
+      height: formData.height,
+      age: formData.age,
+      gender: formData.gender,
+      activityLevel: formData.activityLevel,
+      goal: formData.goal,
+    });
+
+    const macrosChanged =
+      formData.dailyProtein !== user.dailyProtein ||
+      formData.dailyCarbs !== user.dailyCarbs ||
+      formData.dailyFat !== user.dailyFat;
+    const caloriesChanged = formData.dailyCalories !== user.dailyCalories;
+
+    let updated = { ...formData };
+
+    if (!macrosChanged && !caloriesChanged) {
+      updated = { ...updated, ...auto };
+    } else if (caloriesChanged && !macrosChanged) {
+      const macros = calculateMacroTargets(formData.dailyCalories);
+      updated = { ...updated, dailyProtein: macros.protein, dailyCarbs: macros.carbs, dailyFat: macros.fat };
+    } else if (macrosChanged && !caloriesChanged) {
+      updated = { ...updated, dailyCalories: formData.dailyProtein * 4 + formData.dailyCarbs * 4 + formData.dailyFat * 9 };
+    }
+
+    onUpdateUser(updated);
+    setFormData(updated);
     setIsEditing(false);
   };
 
@@ -71,7 +100,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
           setFormData(data.profile);
           alert('Profil importé avec succès !');
         }
-      } catch (error) {
+      } catch {
         alert('Erreur lors de l\'importation du fichier');
       }
     };
@@ -108,7 +137,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <User className="text-blue-500" size={24} />
+            <UserIcon className="text-blue-500" size={24} />
             <h3 className="text-lg font-semibold">Informations personnelles</h3>
           </div>
           <button
@@ -363,6 +392,20 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
               />
             ) : (
               <p className="text-gray-700 dark:text-gray-300">{user.dailyFat} g</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Objectif de pas</label>
+            {isEditing ? (
+              <input
+                type="number"
+                value={formData.stepGoal}
+                onChange={(e) => setFormData(prev => ({ ...prev, stepGoal: parseInt(e.target.value) }))}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700"
+              />
+            ) : (
+              <p className="text-gray-700 dark:text-gray-300">{user.stepGoal} pas</p>
             )}
           </div>
         </div>
