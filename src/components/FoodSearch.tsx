@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Star, Filter, X } from 'lucide-react';
+import { Search, Plus, Star, X } from 'lucide-react';
 import { FoodItem } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import QRScanner from './QRScanner';
+import { OFFProduct, searchProduct } from '../utils/openFoodFacts';
 
 interface FoodSearchProps {
   onAddFood: (food: {
@@ -23,8 +25,10 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
   const [selectedMeal, setSelectedMeal] = useState<'petit-déjeuner' | 'déjeuner' | 'dîner' | 'collation'>('déjeuner');
   const [showFavorites, setShowFavorites] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
   const [favorites, setFavorites] = useLocalStorage<string[]>('nutritalk-favorites', []);
   const [customFoods, setCustomFoods] = useLocalStorage<FoodItem[]>('nutritalk-custom-foods', []);
+  const [externalFoods, setExternalFoods] = useState<FoodItem[]>([]);
 
   // Base de données d'aliments étendue
   const [foods] = useState<FoodItem[]>([
@@ -69,7 +73,7 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
     { id: '28', name: 'Chocolat noir 70%', calories: 546, protein: 8, carbs: 46, fat: 31, category: 'Snacks', unit: '100g' },
   ]);
 
-  const allFoods = [...foods, ...customFoods];
+  const allFoods = [...foods, ...customFoods, ...externalFoods];
 
   const filteredFoods = allFoods.filter(food => {
     const matchesSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -77,6 +81,30 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
     const matchesFavorites = showFavorites ? favorites.includes(food.id) : true;
     return matchesSearch && matchesCategory && matchesFavorites;
   });
+
+  useEffect(() => {
+    const fetchExternal = async () => {
+      if (!searchTerm) {
+        setExternalFoods([]);
+        return;
+      }
+      if (filteredFoods.length > 0) return;
+      const results = await searchProduct(searchTerm);
+      const mapped: FoodItem[] = results.slice(0, 5).map(p => ({
+        id: p.code,
+        name: p.product_name || 'Produit',
+        calories: p.nutriments?.['energy-kcal_100g'] || 0,
+        protein: p.nutriments?.proteins_100g || 0,
+        carbs: p.nutriments?.carbohydrates_100g || 0,
+        fat: p.nutriments?.fat_100g || 0,
+        category: 'Importé',
+        unit: '100g',
+        isCustom: true,
+      }));
+      setExternalFoods(mapped);
+    };
+    fetchExternal();
+  }, [searchTerm, filteredFoods.length]);
 
   const categories = [...new Set(allFoods.map(food => food.category))];
 
@@ -149,18 +177,42 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
     setShowAddForm(false);
   };
 
+  const handleScanResult = (p: OFFProduct) => {
+    const item: FoodItem = {
+      id: p.code,
+      name: p.product_name || 'Produit',
+      calories: p.nutriments?.['energy-kcal_100g'] || 0,
+      protein: p.nutriments?.proteins_100g || 0,
+      carbs: p.nutriments?.carbohydrates_100g || 0,
+      fat: p.nutriments?.fat_100g || 0,
+      category: 'Importé',
+      unit: '100g',
+      isCustom: true,
+    };
+    setCustomFoods(prev => [...prev, item]);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Recherche d'aliments</h2>
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
-        >
-          <Plus size={20} />
-          <span>Ajouter un aliment</span>
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setShowScanner(true)}
+            className="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
+          >
+            <Plus size={20} />
+            <span>Scanner</span>
+          </button>
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+          >
+            <Plus size={20} />
+            <span>Ajouter un aliment</span>
+          </button>
+        </div>
       </div>
 
       {/* Sélection du repas */}
@@ -424,6 +476,9 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
             </form>
           </div>
         </div>
+      )}
+      {showScanner && (
+        <QRScanner onResult={handleScanResult} onClose={() => setShowScanner(false)} />
       )}
     </div>
   );

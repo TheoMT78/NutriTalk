@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, TrendingUp, Download, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, TrendingUp, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { User } from '../types';
 
 interface HistoryProps {
@@ -206,7 +206,7 @@ const History: React.FC<HistoryProps> = ({ user }) => {
         <h3 className="text-lg font-semibold mb-6">Évolution des calories</h3>
         
         <div className="space-y-4">
-          {historyData.slice(-14).map((day, index) => {
+          {historyData.slice(-14).map((day) => {
             const percentage = (day.calories / user.dailyCalories) * 100;
             const isOverTarget = day.calories > user.dailyCalories;
             
