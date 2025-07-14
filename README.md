@@ -11,5 +11,8 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Boutons rapides (+500 à +5000) pour mettre à jour les pas.
 - Calcul des calories restantes en tenant compte des pas.
 - Personnalisation manuelle des objectifs caloriques et macronutriments.
+- Connexion par email avec création de compte locale.
+- Interface en mode sombre par défaut.
+- Progression des calories ajustée automatiquement avec les pas effectués.
 
 Ces fonctionnalités reposent sur l'API publique OpenFoodFacts.

@@ -11,6 +11,7 @@ export interface User {
   dailyProtein: number;
   dailyCarbs: number;
   dailyFat: number;
+  password?: string;
   stepGoal: number;
   avatar: string;
   theme: 'light' | 'dark' | 'auto';

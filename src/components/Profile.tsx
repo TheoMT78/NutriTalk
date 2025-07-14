@@ -6,9 +6,10 @@ import { User as UserType } from '../types';
 interface ProfileProps {
   user: UserType;
   onUpdateUser: (user: UserType) => void;
+  onLogout?: () => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
+const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(user);
 
@@ -130,6 +131,14 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser }) => {
               className="hidden"
             />
           </label>
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
+            >
+              <span>Déconnexion</span>
+            </button>
+          )}
         </div>
       </div>
 

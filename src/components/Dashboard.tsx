@@ -2,10 +2,8 @@ import React from 'react';
 import { Target, TrendingUp, Droplets, Trash2, Edit3, Coffee, Utensils, Moon as Dinner, Apple } from 'lucide-react';
 import { User, DailyLog } from '../types';
 import MacroChart from './MacroChart';
-import StepProgress from './StepProgress';
+import StepProgress, { CALORIES_PER_STEP } from './StepProgress';
 import CalorieProgress from './CalorieProgress';
-
-const CALORIES_PER_STEP = 0.04;
 
 interface DashboardProps {
   user: User;
@@ -34,7 +32,8 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   const getGoalMessage = () => {
     const stepsCalories = Math.max(0, dailyLog.steps - 4000) * CALORIES_PER_STEP;
-    const caloriesRemaining = user.dailyCalories - dailyLog.totalCalories + stepsCalories;
+    const totalGoal = user.dailyCalories + stepsCalories;
+    const caloriesRemaining = totalGoal - dailyLog.totalCalories;
     if (caloriesRemaining > 0) {
       return `Il vous reste ${caloriesRemaining.toFixed(0)} calories aujourd'hui`;
     }
@@ -42,7 +41,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   };
 
   const stepsCalories = Math.max(0, dailyLog.steps - 4000) * CALORIES_PER_STEP;
-  const caloriesRemaining = user.dailyCalories - dailyLog.totalCalories + stepsCalories;
+  const totalGoal = user.dailyCalories + stepsCalories;
+  const caloriesRemaining = totalGoal - dailyLog.totalCalories;
 
   const groupedEntries = dailyLog.entries.reduce((acc, entry) => {
     if (!acc[entry.meal]) {
@@ -81,7 +81,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               <p className="text-2xl font-bold text-blue-600">
                 {dailyLog.totalCalories.toFixed(0)}
               </p>
-              <p className="text-sm text-gray-500">reste {caloriesRemaining.toFixed(0)} / {user.dailyCalories}</p>
+              <p className="text-sm text-gray-500">reste {caloriesRemaining.toFixed(0)} / {totalGoal.toFixed(0)}</p>
             </div>
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
               <Target className="text-blue-600 dark:text-blue-400" size={20} />
@@ -138,7 +138,8 @@ const Dashboard: React.FC<DashboardProps> = ({
       {/* Graphiques */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <CalorieProgress
-          current={dailyLog.totalCalories}
+          consumed={dailyLog.totalCalories}
+          burned={stepsCalories}
           target={user.dailyCalories}
           className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
         />

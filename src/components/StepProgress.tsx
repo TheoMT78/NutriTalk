@@ -8,7 +8,7 @@ interface StepProgressProps {
   className?: string;
 }
 
-const CALORIES_PER_STEP = 0.04;
+export const CALORIES_PER_STEP = 0.04;
 
 const StepProgress: React.FC<StepProgressProps> = ({ current, target, onUpdate, className = '' }) => {
   const percentage = Math.min((current / target) * 100, 100);

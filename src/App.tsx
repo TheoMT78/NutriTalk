@@ -6,6 +6,7 @@ import Profile from './components/Profile';
 import History from './components/History';
 import AIChat from './components/AIChat';
 import FloatingAIButton from './components/FloatingAIButton';
+import Login from './components/Login';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { User, FoodEntry, DailyLog } from './types';
 import { computeDailyTargets } from './utils/nutrition';
@@ -21,8 +22,9 @@ function App() {
     activityLevel: 'modérée' as const,
     goal: 'maintien' as const,
     avatar: 'https://images.pexels.com/photos/1310474/pexels-photo-1310474.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
-    theme: 'light' as const,
+    theme: 'dark' as const,
     notifications: true,
+    password: 'password',
     stepGoal: 10000
   };
 
@@ -47,6 +49,8 @@ function App() {
     steps: 0
   });
 
+  const [loggedIn, setLoggedIn] = useLocalStorage<boolean>('nutritalk-logged-in', false);
+
   const [currentView, setCurrentView] = useState('dashboard');
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -64,6 +68,18 @@ function App() {
       document.documentElement.classList.toggle('dark', prefersDark);
     }
   }, [user.theme]);
+
+  if (!loggedIn) {
+    return (
+      <Login
+        user={user}
+        onLogin={(u) => {
+          setUser(u);
+          setLoggedIn(true);
+        }}
+      />
+    );
+  }
 
   const addFoodEntry = (entry: Omit<FoodEntry, 'id' | 'timestamp'>) => {
     const newEntry: FoodEntry = {
@@ -129,7 +145,7 @@ function App() {
       case 'search':
         return <FoodSearch onAddFood={addFoodEntry} />;
       case 'profile':
-        return <Profile user={user} onUpdateUser={setUser} />;
+        return <Profile user={user} onUpdateUser={setUser} onLogout={() => setLoggedIn(false)} />;
       case 'history':
         return <History user={user} />;
       default:
