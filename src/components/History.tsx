@@ -16,6 +16,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
   const [weightPeriod, setWeightPeriod] = useState<'week' | 'month' | 'threeMonths' | 'sixMonths'>('week');
   const [filterDate, setFilterDate] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [calendarDate, setCalendarDate] = useState(new Date());
 
   // Historique vide au premier lancement
   interface HistoryDay {
@@ -102,10 +103,11 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
     switch (stepsPeriod) {
       case 'week':
         return historyData.slice(-7).map(d => ({
-          label: new Date(d.date)
-            .toLocaleDateString('fr-FR', { weekday: 'short' })
-            .slice(0, 3)
-            .toUpperCase(),
+          label:
+            new Date(d.date)
+              .toLocaleDateString('fr-FR', { weekday: 'short' })
+              .slice(0, 3)
+              .toLowerCase() + '.',
           value: d.steps,
         }));
       case 'month':
@@ -207,7 +209,76 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
         }
         return arr;
       }
+      }
+  };
+
+  const renderDatePicker = () => {
+    const year = calendarDate.getFullYear();
+    const month = calendarDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const startDay = new Date(year, month, 1).getDay();
+    const blanks = (startDay + 6) % 7;
+
+    const daySquares = [] as JSX.Element[];
+    for (let i = 0; i < blanks; i++) {
+      daySquares.push(<div key={`b${i}`} />);
     }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${d
+        .toString()
+        .padStart(2, '0')}`;
+      const dayData = historyData.find(h => h.date === dateStr);
+      let color = 'bg-gray-700';
+      if (dayData) {
+        if (dayData.calories === 0) color = 'bg-red-600';
+        else if (Math.abs(dayData.calories - user.dailyCalories) <= 100)
+          color = 'bg-green-600';
+        else color = 'bg-orange-500';
+      }
+      daySquares.push(
+        <button
+          key={d}
+          onClick={() => {
+            setFilterDate(dateStr);
+            setShowDatePicker(false);
+            setCalendarDate(new Date(year, month, d));
+          }}
+          className={`w-8 h-8 text-xs flex items-center justify-center rounded ${color} hover:brightness-110`}
+        >
+          {d}
+        </button>
+      );
+    }
+
+    return (
+      <div className="absolute z-10 mt-1 right-0 bg-gray-800 text-white p-2 rounded shadow-lg">
+        <div className="flex items-center justify-between mb-2 text-sm">
+          <button
+            onClick={() => setCalendarDate(new Date(year, month - 1, 1))}
+            className="px-1"
+          >
+            {"<"}
+          </button>
+          <span>
+            {calendarDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+          </span>
+          <button
+            onClick={() => setCalendarDate(new Date(year, month + 1, 1))}
+            className="px-1"
+          >
+            {">"}
+          </button>
+        </div>
+        <div className="grid grid-cols-7 gap-1 text-center text-[10px] mb-1">
+          {['lu', 'ma', 'me', 'je', 've', 'sa', 'di'].map(d => (
+            <div key={d} className="text-gray-400">
+              {d}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-1">{daySquares}</div>
+      </div>
+    );
   };
 
   return (
@@ -334,14 +405,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
             >
               <Calendar size={18} />
             </button>
-            {showDatePicker && (
-              <input
-                type="date"
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-                className="absolute left-0 mt-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded"
-              />
-            )}
+            {showDatePicker && renderDatePicker()}
           </div>
         </div>
 
@@ -377,17 +441,8 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {(filterDate ? historyData.filter(d => d.date === filterDate) : historyData.slice(-10).reverse()).map((day) => {
-                const diff = Math.abs(day.calories - user.dailyCalories);
-                let rowColor = '';
-                if (day.calories === 0) {
-                  rowColor = 'bg-red-100 dark:bg-red-900';
-                } else if (diff <= user.dailyCalories * 0.05) {
-                  rowColor = 'bg-green-100 dark:bg-green-900';
-                } else if (day.calories < user.dailyCalories - 500) {
-                  rowColor = 'bg-orange-100 dark:bg-orange-900';
-                }
                 return (
-                <tr key={day.date} className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${rowColor}`}>
+                <tr key={day.date} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-4 py-2 whitespace-nowrap font-medium">
                     {new Date(day.date).toLocaleDateString('fr-FR')}
                   </td>
