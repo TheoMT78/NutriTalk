@@ -19,17 +19,18 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
   const [calendarDate, setCalendarDate] = useState(new Date());
 
   // Historique vide au premier lancement
-  interface HistoryDay {
-    date: string;
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-    water: number;
-    weight: number;
-    steps: number;
-    meals: number;
-  }
+interface HistoryDay {
+  date: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  water: number;
+  weight: number;
+  steps: number;
+  targetCalories: number;
+  meals: number;
+}
 
   // Simuler un an de données pour pouvoir afficher des graphiques étendus
   const sampleHistory: HistoryDay[] = Array.from({ length: 365 }).map((_, i) => {
@@ -44,6 +45,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
       water: 1800 + (i % 7) * 100,
       weight: parseFloat((user.weight + Math.sin(i / 12) * 0.5).toFixed(1)),
       steps: 8000 + (i % 20) * 200,
+      targetCalories: user.dailyCalories,
       meals: 3
     };
   });
@@ -231,7 +233,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
       let color = 'bg-gray-700';
       if (dayData) {
         if (dayData.calories === 0) color = 'bg-red-600';
-        else if (Math.abs(dayData.calories - user.dailyCalories) <= 100)
+        else if (Math.abs(dayData.calories - dayData.targetCalories) <= dayData.targetCalories * 0.05)
           color = 'bg-green-600';
         else color = 'bg-orange-500';
       }
@@ -243,7 +245,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
             setShowDatePicker(false);
             setCalendarDate(new Date(year, month, d));
           }}
-          className={`w-8 h-8 text-xs flex items-center justify-center rounded ${color} hover:brightness-110`}
+          className={`w-10 h-10 text-sm flex items-center justify-center rounded ${color} hover:brightness-110`}
         >
           {d}
         </button>

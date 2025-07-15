@@ -42,6 +42,7 @@ export interface DailyLog {
   totalFat: number;
   water: number;
   steps: number;
+  targetCalories: number;
   weight?: number;
 }
 

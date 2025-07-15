@@ -50,6 +50,7 @@ function App() {
     totalFat: 0,
     water: 0,
     steps: 0,
+    targetCalories: targets.calories,
     weight: defaultUser.weight
   });
 

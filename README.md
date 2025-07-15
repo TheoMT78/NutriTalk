@@ -23,7 +23,7 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Les barres de l'historique passent au vert si l'objectif journalier est respecté à ±5%.
 - Suivi du poids sur 7 jours grâce à un graphique intégré au tableau de bord.
 - Le suivi des pas affiche le pourcentage exact même au-delà de 100%.
-- Base d'aliments enrichie avec plus de céréales crues et de fruits.
+- Base d'aliments enrichie avec encore plus de produits crus, légumineuses et fruits pour de meilleurs résultats lors des recherches.
 - Historique enrichi avec graphiques du poids et du nombre de pas.
 - Historique d'exemple d'un an pour visualiser immédiatement les graphiques.
 - Objectif d'hydratation personnalisable avec des boutons +1L, +500 ml, +250 ml et -250 ml.

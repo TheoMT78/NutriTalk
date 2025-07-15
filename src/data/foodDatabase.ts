@@ -130,5 +130,13 @@ export const foodDatabase: FoodItem[] = [
   // Quelques fruits supplémentaires
   { id: '108', name: 'Framboises', calories: 52, protein: 1.2, carbs: 12, fat: 0.7, category: 'Fruits', unit: '100g' },
   { id: '109', name: 'Myrtilles', calories: 57, protein: 0.7, carbs: 14, fat: 0.3, category: 'Fruits', unit: '100g' },
-  { id: '110', name: 'Groseilles', calories: 56, protein: 1.4, carbs: 13, fat: 0.2, category: 'Fruits', unit: '100g' }
+  { id: '110', name: 'Groseilles', calories: 56, protein: 1.4, carbs: 13, fat: 0.2, category: 'Fruits', unit: '100g' },
+  { id: '111', name: 'Pignons de pin', calories: 673, protein: 14, carbs: 13, fat: 68, category: 'Fruits secs', unit: '100g' },
+  { id: '112', name: 'Farine de blé', calories: 364, protein: 10, carbs: 76, fat: 1, category: 'Féculents', unit: '100g' },
+  { id: '113', name: 'Semoule de maïs', calories: 370, protein: 7, carbs: 79, fat: 1, category: 'Féculents', unit: '100g' },
+  { id: '114', name: 'Pois cassés cuits', calories: 118, protein: 8, carbs: 21, fat: 0.4, category: 'Légumineuses', unit: '100g' },
+  { id: '115', name: 'Pois cassés secs', calories: 320, protein: 23, carbs: 53, fat: 1.4, category: 'Légumineuses', unit: '100g' },
+  { id: '116', name: 'Courge butternut', calories: 45, protein: 1, carbs: 12, fat: 0.1, category: 'Légumes', unit: '100g' },
+  { id: '117', name: 'Chou kale', calories: 49, protein: 4.3, carbs: 9, fat: 0.9, category: 'Légumes', unit: '100g' },
+  { id: '118', name: 'Grenade', calories: 83, protein: 1.7, carbs: 19, fat: 1.2, category: 'Fruits', unit: '100g' }
 ];
