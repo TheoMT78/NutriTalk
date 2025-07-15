@@ -11,10 +11,11 @@ interface StepProgressProps {
 export const CALORIES_PER_STEP = 0.04;
 
 const StepProgress: React.FC<StepProgressProps> = ({ current, target, onUpdate, className = '' }) => {
-  const percentage = Math.min((current / target) * 100, 100);
+  const rawPercentage = (current / target) * 100;
+  const percentage = Math.min(rawPercentage, 100);
   const extraSteps = Math.max(0, current - 4000);
   const caloriesBurned = extraSteps * CALORIES_PER_STEP;
-  const reached = percentage >= 100;
+  const reached = rawPercentage >= 100;
   return (
     <div className={className}>
       <div className="flex items-center justify-between mb-4">
@@ -46,7 +47,7 @@ const StepProgress: React.FC<StepProgressProps> = ({ current, target, onUpdate, 
         </svg>
       <div className="absolute inset-0 flex items-center justify-center">
         <div className={`text-2xl font-bold ${reached ? 'text-red-500' : 'text-teal-500'}`}>
-          {percentage.toFixed(0)}%
+          {rawPercentage.toFixed(0)}%
         </div>
       </div>
       </div>
@@ -54,7 +55,7 @@ const StepProgress: React.FC<StepProgressProps> = ({ current, target, onUpdate, 
         {caloriesBurned.toFixed(0)} kcal brûlées
       </div>
       {onUpdate && (
-        <div className="flex justify-center space-x-2 mt-2">
+        <div className="flex justify-center flex-wrap gap-2 mt-2">
           <button
             onClick={() => onUpdate(5000)}
             className="px-3 py-1 text-sm bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors duration-200"

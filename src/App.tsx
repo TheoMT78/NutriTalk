@@ -50,6 +50,8 @@ function App() {
     weight: defaultUser.weight
   });
 
+  const [weightHistory, setWeightHistory] = useLocalStorage<{ date: string; weight: number }[]>('nutritalk-weight-history', []);
+
   const [loggedIn, setLoggedIn] = useLocalStorage<boolean>('nutritalk-logged-in', false);
 
   const [currentView, setCurrentView] = useState('dashboard');
@@ -135,6 +137,11 @@ function App() {
     const newWeight = Math.max(0, user.weight + delta);
     setUser(prev => ({ ...prev, weight: newWeight }));
     setDailyLog(prev => ({ ...prev, weight: newWeight }));
+    const today = new Date().toISOString().split('T')[0];
+    setWeightHistory(prev => {
+      const filtered = prev.filter(p => p.date !== today);
+      return [...filtered, { date: today, weight: newWeight }];
+    });
   };
 
   const renderView = () => {
@@ -148,6 +155,7 @@ function App() {
             onUpdateWater={updateWater}
             onUpdateSteps={updateSteps}
             onUpdateWeight={updateWeight}
+            weightHistory={weightHistory}
           />
         );
       case 'search':
@@ -165,6 +173,7 @@ function App() {
             onUpdateWater={updateWater}
             onUpdateSteps={updateSteps}
             onUpdateWeight={updateWeight}
+            weightHistory={weightHistory}
           />
         );
     }

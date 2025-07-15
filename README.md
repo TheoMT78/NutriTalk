@@ -20,5 +20,8 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Les glucides recommandés augmentent selon les calories brûlées.
 - L'historique est vide au départ et se remplit avec vos entrées.
 - Les barres de l'historique passent au vert si l'objectif journalier est respecté à ±5%.
+- Suivi du poids sur 7 jours grâce à un graphique intégré au tableau de bord.
+- Le suivi des pas affiche le pourcentage exact même au-delà de 100%.
+- Base d'aliments enrichie avec plus de céréales crues et de fruits.
 
 Ces fonctionnalités reposent sur l'API publique OpenFoodFacts.

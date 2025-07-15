@@ -117,5 +117,18 @@ export const foodDatabase: FoodItem[] = [
   { id: '97', name: 'Biscuits secs', calories: 416, protein: 6.6, carbs: 72, fat: 12, category: 'Snacks', unit: '100g' },
   { id: '98', name: 'Chips', calories: 536, protein: 7, carbs: 53, fat: 34, category: 'Snacks', unit: '100g' },
   { id: '99', name: 'Pop-corn', calories: 387, protein: 12, carbs: 78, fat: 5, category: 'Snacks', unit: '100g' },
-  { id: '100', name: 'Barres de céréales', calories: 384, protein: 6, carbs: 67, fat: 11, category: 'Snacks', unit: '100g' }
+  { id: '100', name: 'Barres de céréales', calories: 384, protein: 6, carbs: 67, fat: 11, category: 'Snacks', unit: '100g' },
+
+  // Féculents crus supplémentaires
+  { id: '101', name: 'Riz blanc cru', calories: 360, protein: 7, carbs: 80, fat: 0.6, category: 'Féculents', unit: '100g' },
+  { id: '102', name: 'Riz basmati cru', calories: 350, protein: 8, carbs: 78, fat: 0.8, category: 'Féculents', unit: '100g' },
+  { id: '103', name: 'Riz complet cru', calories: 362, protein: 7.5, carbs: 76, fat: 2.8, category: 'Féculents', unit: '100g' },
+  { id: '104', name: 'Pâtes crues', calories: 371, protein: 13, carbs: 74, fat: 1.5, category: 'Féculents', unit: '100g' },
+  { id: '105', name: 'Pâtes complètes crues', calories: 348, protein: 14, carbs: 72, fat: 2.5, category: 'Féculents', unit: '100g' },
+  { id: '106', name: 'Quinoa cru', calories: 368, protein: 14, carbs: 64, fat: 6, category: 'Féculents', unit: '100g' },
+  { id: '107', name: 'Couscous cru', calories: 376, protein: 12, carbs: 77, fat: 0.6, category: 'Féculents', unit: '100g' },
+  // Quelques fruits supplémentaires
+  { id: '108', name: 'Framboises', calories: 52, protein: 1.2, carbs: 12, fat: 0.7, category: 'Fruits', unit: '100g' },
+  { id: '109', name: 'Myrtilles', calories: 57, protein: 0.7, carbs: 14, fat: 0.3, category: 'Fruits', unit: '100g' },
+  { id: '110', name: 'Groseilles', calories: 56, protein: 1.4, carbs: 13, fat: 0.2, category: 'Fruits', unit: '100g' }
 ];

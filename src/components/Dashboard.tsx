@@ -4,6 +4,7 @@ import { User, DailyLog } from '../types';
 import MacroChart from './MacroChart';
 import StepProgress, { CALORIES_PER_STEP } from './StepProgress';
 import CalorieProgress from './CalorieProgress';
+import WeightChart from './WeightChart';
 
 interface DashboardProps {
   user: User;
@@ -12,6 +13,7 @@ interface DashboardProps {
   onUpdateWater: (amount: number) => void;
   onUpdateSteps: (amount: number) => void;
   onUpdateWeight: (delta: number) => void;
+  weightHistory: { date: string; weight: number }[];
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -20,7 +22,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   onRemoveEntry,
   onUpdateWater,
   onUpdateSteps,
-  onUpdateWeight
+  onUpdateWeight,
+  weightHistory
 }) => {
   const getMealIcon = (meal: string) => {
     switch (meal) {
@@ -167,7 +170,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Poids</p>
           <p className="text-2xl font-bold mb-2">{user.weight.toFixed(1)} kg</p>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap justify-center gap-2 mb-2">
             <button onClick={() => onUpdateWeight(-1)} className="px-2 py-1 border rounded">-1</button>
             <button onClick={() => onUpdateWeight(-0.5)} className="px-2 py-1 border rounded">-0.5</button>
             <button onClick={() => onUpdateWeight(-0.1)} className="px-2 py-1 border rounded">-0.1</button>
@@ -175,6 +178,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             <button onClick={() => onUpdateWeight(0.5)} className="px-2 py-1 border rounded">+0.5</button>
             <button onClick={() => onUpdateWeight(1)} className="px-2 py-1 border rounded">+1</button>
           </div>
+          <WeightChart data={weightHistory.slice(-7)} />
         </div>
       </div>
 
