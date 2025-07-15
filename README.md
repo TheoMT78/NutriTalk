@@ -10,7 +10,7 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Suivi du nombre de pas avec objectif personnalisable et calcul automatique des calories brûlées.
 - Boutons rapides (+500 à +5000) pour mettre à jour les pas.
 - Calcul des calories restantes en tenant compte des pas.
-- Ajustement automatique de l'apport si l'objectif est la prise ou la perte de poids (±10%).
+- Objectifs de poids déclinés en perte légère/modérée ou prise légère/modérée (±5 à ±10%).
 - Les besoins quotidiens et l'objectif calorique se mettent à jour dès que l'objectif de poids est modifié.
 - Personnalisation manuelle des objectifs caloriques et macronutriments.
 - Connexion par email avec création de compte locale.

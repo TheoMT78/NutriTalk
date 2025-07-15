@@ -6,7 +6,7 @@ export interface MacroTargets {
 }
 
 export function calculateTDEE({ weight, height, age, gender, activityLevel, goal }:
-  { weight: number; height: number; age: number; gender: 'homme' | 'femme'; activityLevel: string; goal: 'perte' | 'maintien' | 'prise'; }): number {
+  { weight: number; height: number; age: number; gender: 'homme' | 'femme'; activityLevel: string; goal: 'perte5' | 'perte10' | 'maintien' | 'prise5' | 'prise10'; }): number {
   // Formule de Mifflin-St Jeor
   const bmr = gender === 'homme'
     ? 10 * weight + 6.25 * height - 5 * age + 5
@@ -22,8 +22,24 @@ export function calculateTDEE({ weight, height, age, gender, activityLevel, goal
 
   const tdee = bmr * (activityMultipliers[activityLevel] || 1.2);
 
-  // Ajustement selon l'objectif (±10 % du TDEE)
-  const goalMultiplier = goal === 'perte' ? 0.9 : goal === 'prise' ? 1.1 : 1;
+  // Ajustement selon l'objectif
+  let goalMultiplier = 1;
+  switch (goal) {
+    case 'perte5':
+      goalMultiplier = 0.95;
+      break;
+    case 'perte10':
+      goalMultiplier = 0.9;
+      break;
+    case 'prise5':
+      goalMultiplier = 1.05;
+      break;
+    case 'prise10':
+      goalMultiplier = 1.1;
+      break;
+    default:
+      goalMultiplier = 1;
+  }
 
   return Math.round(tdee * goalMultiplier);
 }
@@ -39,7 +55,7 @@ export function calculateMacroTargets(calories: number): Omit<MacroTargets, 'cal
   };
 }
 
-export function computeDailyTargets(user: { weight: number; height: number; age: number; gender: 'homme' | 'femme'; activityLevel: string; goal: 'perte' | 'maintien' | 'prise'; }): MacroTargets {
+export function computeDailyTargets(user: { weight: number; height: number; age: number; gender: 'homme' | 'femme'; activityLevel: string; goal: 'perte5' | 'perte10' | 'maintien' | 'prise5' | 'prise10'; }): MacroTargets {
   const calories = calculateTDEE(user);
   const macros = calculateMacroTargets(calories);
   return { calories, ...macros };

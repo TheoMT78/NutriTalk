@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { computeDailyTargets, calculateMacroTargets } from '../utils/nutrition';
 import { User as UserIcon, Settings, Target, Activity, Palette, Download, Upload } from 'lucide-react';
+import NumberStepper from './NumberStepper';
 import { User as UserType } from '../types';
 
 interface ProfileProps {
@@ -12,6 +13,7 @@ interface ProfileProps {
 const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(user);
+  const [locks, setLocks] = useState({ calories: false, protein: false, carbs: false, fat: false });
   const autoTargetsRef = useRef(computeDailyTargets(user));
 
   const handleSave = () => {
@@ -24,21 +26,39 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
       goal: formData.goal,
     });
 
-    const macrosChanged =
-      formData.dailyProtein !== user.dailyProtein ||
-      formData.dailyCarbs !== user.dailyCarbs ||
-      formData.dailyFat !== user.dailyFat;
-    const caloriesChanged = formData.dailyCalories !== user.dailyCalories;
+    const updated = { ...formData } as UserType;
 
-    let updated = { ...formData };
+    if (!locks.calories) {
+      updated.dailyCalories = auto.calories;
+    }
 
-    if (!macrosChanged && !caloriesChanged) {
-      updated = { ...updated, ...auto };
-    } else if (caloriesChanged && !macrosChanged) {
-      const macros = calculateMacroTargets(formData.dailyCalories);
-      updated = { ...updated, dailyProtein: macros.protein, dailyCarbs: macros.carbs, dailyFat: macros.fat };
-    } else if (macrosChanged && !caloriesChanged) {
-      updated = { ...updated, dailyCalories: formData.dailyProtein * 4 + formData.dailyCarbs * 4 + formData.dailyFat * 9 };
+    if (!locks.protein && !locks.carbs && !locks.fat) {
+      const macros = calculateMacroTargets(updated.dailyCalories);
+      updated.dailyProtein = macros.protein;
+      updated.dailyCarbs = macros.carbs;
+      updated.dailyFat = macros.fat;
+    } else if (locks.calories) {
+      let remaining = updated.dailyCalories;
+      if (locks.protein) remaining -= updated.dailyProtein * 4;
+      if (locks.carbs) remaining -= updated.dailyCarbs * 4;
+      if (locks.fat) remaining -= updated.dailyFat * 9;
+      const unlocked = [] as ('protein' | 'carbs' | 'fat')[];
+      if (!locks.protein) unlocked.push('protein');
+      if (!locks.carbs) unlocked.push('carbs');
+      if (!locks.fat) unlocked.push('fat');
+      if (unlocked.length === 1) {
+        const key = unlocked[0];
+        if (key === 'protein') updated.dailyProtein = Math.round(remaining / 4);
+        if (key === 'carbs') updated.dailyCarbs = Math.round(remaining / 4);
+        if (key === 'fat') updated.dailyFat = Math.round(remaining / 9);
+      } else {
+        const macros = calculateMacroTargets(updated.dailyCalories);
+        if (!locks.protein) updated.dailyProtein = macros.protein;
+        if (!locks.carbs) updated.dailyCarbs = macros.carbs;
+        if (!locks.fat) updated.dailyFat = macros.fat;
+      }
+    } else {
+      updated.dailyCalories = updated.dailyProtein * 4 + updated.dailyCarbs * 4 + updated.dailyFat * 9;
     }
 
     onUpdateUser(updated);
@@ -48,9 +68,11 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
 
   const handleCancel = () => {
     setFormData(user);
+    setLocks({ calories: false, protein: false, carbs: false, fat: false });
     setIsEditing(false);
   };
 
+  // Automatically update targets when profile data changes unless fields are locked
   useEffect(() => {
     const newTargets = computeDailyTargets({
       weight: formData.weight,
@@ -73,13 +95,13 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
     if (usingAuto) {
       setFormData((f) => ({
         ...f,
-        dailyCalories: newTargets.calories,
-        dailyProtein: newTargets.protein,
-        dailyCarbs: newTargets.carbs,
-        dailyFat: newTargets.fat,
+        dailyCalories: locks.calories ? f.dailyCalories : newTargets.calories,
+        dailyProtein: locks.protein ? f.dailyProtein : newTargets.protein,
+        dailyCarbs: locks.carbs ? f.dailyCarbs : newTargets.carbs,
+        dailyFat: locks.fat ? f.dailyFat : newTargets.fat,
       }));
     }
-  }, [formData.weight, formData.height, formData.age, formData.gender, formData.activityLevel, formData.goal, formData.dailyCalories, formData.dailyProtein, formData.dailyCarbs, formData.dailyFat]);
+  }, [formData.weight, formData.height, formData.age, formData.gender, formData.activityLevel, formData.goal, formData.dailyCalories, formData.dailyProtein, formData.dailyCarbs, formData.dailyFat, locks.calories, locks.protein, locks.carbs, locks.fat]);
 
   const calculateBMI = () => {
     const heightInMeters = formData.height / 100;
@@ -307,14 +329,18 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
                   onChange={(e) => setFormData(prev => ({ ...prev, goal: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700"
                 >
-                  <option value="perte">Perte de poids</option>
+                  <option value="perte5">Perte légère (-5%)</option>
+                  <option value="perte10">Perte modérée (-10%)</option>
                   <option value="maintien">Maintien</option>
-                  <option value="prise">Prise de poids</option>
+                  <option value="prise5">Prise légère (+5%)</option>
+                  <option value="prise10">Prise modérée (+10%)</option>
                 </select>
               ) : (
                 <p className="text-gray-700 dark:text-gray-300">
-                  {user.goal === 'perte' ? 'Perte de poids' : 
-                   user.goal === 'maintien' ? 'Maintien' : 'Prise de poids'}
+                  {user.goal === 'perte5' ? 'Perte légère (-5%)' :
+                   user.goal === 'perte10' ? 'Perte modérée (-10%)' :
+                   user.goal === 'prise5' ? 'Prise légère (+5%)' :
+                   user.goal === 'prise10' ? 'Prise modérée (+10%)' : 'Maintien'}
                 </p>
               )}
             </div>
@@ -382,11 +408,11 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
           <div>
             <label className="block text-sm font-medium mb-2">Calories quotidiennes</label>
             {isEditing ? (
-              <input
-                type="number"
+              <NumberStepper
                 value={formData.dailyCalories}
-                onChange={(e) => setFormData(prev => ({ ...prev, dailyCalories: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700"
+                onChange={(val) => setFormData(prev => ({ ...prev, dailyCalories: typeof val === 'number' ? val : val(prev.dailyCalories) }))}
+                locked={locks.calories}
+                onToggleLock={() => setLocks(l => ({ ...l, calories: !l.calories }))}
               />
             ) : (
               <p className="text-gray-700 dark:text-gray-300">{user.dailyCalories} kcal</p>
@@ -396,11 +422,11 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
           <div>
             <label className="block text-sm font-medium mb-2">Protéines</label>
             {isEditing ? (
-              <input
-                type="number"
+              <NumberStepper
                 value={formData.dailyProtein}
-                onChange={(e) => setFormData(prev => ({ ...prev, dailyProtein: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700"
+                onChange={(val) => setFormData(prev => ({ ...prev, dailyProtein: typeof val === 'number' ? val : val(prev.dailyProtein) }))}
+                locked={locks.protein}
+                onToggleLock={() => setLocks(l => ({ ...l, protein: !l.protein }))}
               />
             ) : (
               <p className="text-gray-700 dark:text-gray-300">{user.dailyProtein} g</p>
@@ -410,11 +436,11 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
           <div>
             <label className="block text-sm font-medium mb-2">Glucides</label>
             {isEditing ? (
-              <input
-                type="number"
+              <NumberStepper
                 value={formData.dailyCarbs}
-                onChange={(e) => setFormData(prev => ({ ...prev, dailyCarbs: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700"
+                onChange={(val) => setFormData(prev => ({ ...prev, dailyCarbs: typeof val === 'number' ? val : val(prev.dailyCarbs) }))}
+                locked={locks.carbs}
+                onToggleLock={() => setLocks(l => ({ ...l, carbs: !l.carbs }))}
               />
             ) : (
               <p className="text-gray-700 dark:text-gray-300">{user.dailyCarbs} g</p>
@@ -424,11 +450,11 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
           <div>
             <label className="block text-sm font-medium mb-2">Lipides</label>
             {isEditing ? (
-              <input
-                type="number"
+              <NumberStepper
                 value={formData.dailyFat}
-                onChange={(e) => setFormData(prev => ({ ...prev, dailyFat: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700"
+                onChange={(val) => setFormData(prev => ({ ...prev, dailyFat: typeof val === 'number' ? val : val(prev.dailyFat) }))}
+                locked={locks.fat}
+                onToggleLock={() => setLocks(l => ({ ...l, fat: !l.fat }))}
               />
             ) : (
               <p className="text-gray-700 dark:text-gray-300">{user.dailyFat} g</p>

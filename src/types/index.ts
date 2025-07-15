@@ -6,7 +6,7 @@ export interface User {
   height: number;
   gender: 'homme' | 'femme';
   activityLevel: 'sédentaire' | 'légère' | 'modérée' | 'élevée' | 'très élevée';
-  goal: 'perte' | 'maintien' | 'prise';
+  goal: 'perte5' | 'perte10' | 'maintien' | 'prise5' | 'prise10';
   dailyCalories: number;
   dailyProtein: number;
   dailyCarbs: number;
