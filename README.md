@@ -9,7 +9,7 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Les recherches utilisent aussi une correspondance approximative pour trouver l'aliment le plus proche dans la base locale.
 - Possibilité de scanner un code-barres pour importer automatiquement un aliment.
   Si le navigateur ne supporte pas l'API BarcodeDetector, un lecteur alternatif basé sur ZXing est utilisé.
-  Le produit scanné est ajouté automatiquement à votre base personnelle avec ses macronutriments.
+  Le produit scanné est désormais enregistré instantanément dans votre base personnelle avec ses macronutriments et un message de confirmation s'affiche.
 - Calcul automatique des besoins quotidiens en calories et macronutriments à partir de l'âge, du poids, de la taille et du sexe avec ajustement selon la fréquence d'activité.
 - Les macronutriments sont répartis sur 25% de protéines, 25% de lipides et 50% de glucides.
 - Suivi du nombre de pas avec objectif personnalisable et calcul automatique des calories brûlées.

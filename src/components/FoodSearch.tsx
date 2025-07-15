@@ -216,6 +216,8 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
     setCustomFoods(prev =>
       prev.some(f => f.id === item.id) ? prev : [...prev, item]
     );
+
+    alert(`${item.name} ajouté à vos aliments personnalisés`);
   };
 
   return (
