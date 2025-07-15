@@ -57,11 +57,11 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
     { id: '15', name: 'Courgettes', calories: 17, protein: 1.2, carbs: 3.1, fat: 0.3, category: 'Légumes', unit: '100g' },
     
     // Fruits
-    { id: '16', name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, category: 'Fruits', unit: '100g' },
-    { id: '17', name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, category: 'Fruits', unit: '100g' },
-    { id: '18', name: 'Orange', calories: 47, protein: 0.9, carbs: 12, fat: 0.1, category: 'Fruits', unit: '100g' },
+    { id: '16', name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, fiber: 2.6, vitaminC: 15, category: 'Fruits', unit: '100g' },
+    { id: '17', name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, fiber: 2.4, vitaminC: 7, category: 'Fruits', unit: '100g' },
+    { id: '18', name: 'Orange', calories: 47, protein: 0.9, carbs: 12, fat: 0.1, fiber: 2.4, vitaminC: 89, category: 'Fruits', unit: '100g' },
     { id: '19', name: 'Avocat', calories: 160, protein: 2, carbs: 9, fat: 15, category: 'Fruits', unit: '100g' },
-    { id: '20', name: 'Fraises', calories: 32, protein: 0.7, carbs: 8, fat: 0.3, category: 'Fruits', unit: '100g' },
+    { id: '20', name: 'Fraises', calories: 32, protein: 0.7, carbs: 8, fat: 0.3, fiber: 2, vitaminC: 59, category: 'Fruits', unit: '100g' },
     
     // Produits laitiers
     { id: '21', name: 'Yaourt nature 0%', calories: 56, protein: 10, carbs: 4, fat: 0.1, category: 'Produits laitiers', unit: '100g' },
@@ -100,6 +100,11 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
         protein: p.nutriments?.proteins_100g || 0,
         carbs: p.nutriments?.carbohydrates_100g || 0,
         fat: p.nutriments?.fat_100g || 0,
+        fiber: p.nutriments?.fiber_100g || 0,
+        vitaminA: p.nutriments?.['vitamin-a_100g'] || 0,
+        vitaminC: p.nutriments?.['vitamin-c_100g'] || 0,
+        calcium: p.nutriments?.['calcium_100g'] || 0,
+        iron: p.nutriments?.['iron_100g'] || 0,
         category: 'Importé',
         unit: '100g',
         isCustom: true,
@@ -127,7 +132,7 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
     const quantity = quantities[food.id] || 100;
     const multiplier = quantity / 100;
     
-    onAddFood({
+  onAddFood({
       name: food.name,
       quantity,
       unit: food.unit,
@@ -135,6 +140,11 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
       protein: food.protein * multiplier,
       carbs: food.carbs * multiplier,
       fat: food.fat * multiplier,
+      fiber: (food.fiber || 0) * multiplier,
+      vitaminA: (food.vitaminA || 0) * multiplier,
+      vitaminC: (food.vitaminC || 0) * multiplier,
+      calcium: (food.calcium || 0) * multiplier,
+      iron: (food.iron || 0) * multiplier,
       category: food.category,
       meal: selectedMeal
     });
@@ -188,6 +198,11 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
       protein: p.nutriments?.proteins_100g || 0,
       carbs: p.nutriments?.carbohydrates_100g || 0,
       fat: p.nutriments?.fat_100g || 0,
+      fiber: p.nutriments?.fiber_100g || 0,
+      vitaminA: p.nutriments?.['vitamin-a_100g'] || 0,
+      vitaminC: p.nutriments?.['vitamin-c_100g'] || 0,
+      calcium: p.nutriments?.['calcium_100g'] || 0,
+      iron: p.nutriments?.['iron_100g'] || 0,
       category: 'Importé',
       unit: '100g',
       isCustom: true,

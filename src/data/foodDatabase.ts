@@ -55,12 +55,12 @@ export const foodDatabase: FoodItem[] = [
   { id: '47', name: 'Radis', calories: 16, protein: 0.7, carbs: 3.4, fat: 0.1, category: 'Légumes', unit: '100g' },
 
   // Fruits
-  { id: '48', name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, category: 'Fruits', unit: '100g' },
-  { id: '49', name: 'Poire', calories: 57, protein: 0.4, carbs: 15, fat: 0.1, category: 'Fruits', unit: '100g' },
-  { id: '50', name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, category: 'Fruits', unit: '100g' },
-  { id: '51', name: 'Orange', calories: 47, protein: 0.9, carbs: 12, fat: 0.1, category: 'Fruits', unit: '100g' },
+  { id: '48', name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, fiber: 2.4, vitaminC: 7, category: 'Fruits', unit: '100g' },
+  { id: '49', name: 'Poire', calories: 57, protein: 0.4, carbs: 15, fat: 0.1, fiber: 3.1, vitaminC: 5, category: 'Fruits', unit: '100g' },
+  { id: '50', name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, fiber: 2.6, vitaminC: 15, category: 'Fruits', unit: '100g' },
+  { id: '51', name: 'Orange', calories: 47, protein: 0.9, carbs: 12, fat: 0.1, fiber: 2.4, vitaminC: 89, category: 'Fruits', unit: '100g' },
   { id: '52', name: 'Pamplemousse', calories: 42, protein: 0.8, carbs: 11, fat: 0.1, category: 'Fruits', unit: '100g' },
-  { id: '53', name: 'Fraises', calories: 32, protein: 0.7, carbs: 8, fat: 0.3, category: 'Fruits', unit: '100g' },
+  { id: '53', name: 'Fraises', calories: 32, protein: 0.7, carbs: 8, fat: 0.3, fiber: 2, vitaminC: 59, category: 'Fruits', unit: '100g' },
   { id: '54', name: 'Kiwi', calories: 61, protein: 1.1, carbs: 15, fat: 0.5, category: 'Fruits', unit: '100g' },
   { id: '55', name: 'Ananas', calories: 50, protein: 0.5, carbs: 13, fat: 0.1, category: 'Fruits', unit: '100g' },
   { id: '56', name: 'Mangue', calories: 60, protein: 0.8, carbs: 15, fat: 0.4, category: 'Fruits', unit: '100g' },

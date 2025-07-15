@@ -31,6 +31,7 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Historique d'exemple d'un an pour visualiser immédiatement les graphiques.
 - Historique vide par défaut et calendrier plus large avec cases réduites.
 - Un clic sur la progression des calories affiche un tableau détaillé des macro et micronutriments.
+- Les fibres sont calculées lorsque vous ajoutez des fruits et les vitamines A, C, calcium et fer s'affichent en pourcentage de l'apport quotidien.
 - Le tableau des macros est désormais défilable pour rester lisible sur mobile.
 - Les cartes Protéines, Glucides et Lipides affichent une barre de progression.
 - La carte Calories affiche également une barre de progression bleue.

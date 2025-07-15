@@ -28,6 +28,11 @@ export interface FoodEntry {
   protein: number;
   carbs: number;
   fat: number;
+  fiber?: number;
+  vitaminA?: number;
+  vitaminC?: number;
+  calcium?: number;
+  iron?: number;
   category: string;
   meal: 'petit-déjeuner' | 'déjeuner' | 'dîner' | 'collation';
   timestamp: string;
@@ -53,6 +58,11 @@ export interface FoodItem {
   protein: number;
   carbs: number;
   fat: number;
+  fiber?: number;
+  vitaminA?: number;
+  vitaminC?: number;
+  calcium?: number;
+  iron?: number;
   category: string;
   unit: string;
   isFavorite?: boolean;

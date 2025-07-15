@@ -5,6 +5,11 @@ export interface OFFProduct {
     proteins_100g?: number;
     carbohydrates_100g?: number;
     fat_100g?: number;
+    fiber_100g?: number;
+    'vitamin-a_100g'?: number;
+    'vitamin-c_100g'?: number;
+    calcium_100g?: number;
+    iron_100g?: number;
   };
   code: string;
   serving_size?: string;

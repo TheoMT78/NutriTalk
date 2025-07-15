@@ -13,6 +13,11 @@ interface AIChatProps {
     protein: number;
     carbs: number;
     fat: number;
+    fiber?: number;
+    vitaminA?: number;
+    vitaminC?: number;
+    calcium?: number;
+    iron?: number;
     category: string;
     meal: 'petit-déjeuner' | 'déjeuner' | 'dîner' | 'collation';
   }) => void;
@@ -37,6 +42,11 @@ interface FoodSuggestion {
   protein: number;
   carbs: number;
   fat: number;
+  fiber?: number;
+  vitaminA?: number;
+  vitaminC?: number;
+  calcium?: number;
+  iron?: number;
   category: string;
   meal: 'petit-déjeuner' | 'déjeuner' | 'dîner' | 'collation';
   confidence: number;
@@ -84,9 +94,9 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, onAddRecipe, isDark
       { keywords: ['pain', 'bread'], food: { name: 'Pain complet', calories: 247, protein: 13, carbs: 41, fat: 4.2, category: 'Féculents', unit: '100g' }},
       { keywords: ['tomate', 'tomato'], food: { name: 'Tomates', calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2, category: 'Légumes', unit: '100g' }},
       { keywords: ['salade', 'salad'], food: { name: 'Salade verte', calories: 15, protein: 1.4, carbs: 2.9, fat: 0.2, category: 'Légumes', unit: '100g' }},
-      { keywords: ['banane', 'banana'], food: { name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, category: 'Fruits', unit: '100g' }},
-      { keywords: ['kiwi jaune', 'kiwi gold', 'kiwi', 'sungold'], food: { name: 'Kiwi jaune', calories: 60, protein: 1.1, carbs: 15, fat: 0.5, category: 'Fruits', unit: '100g' }},
-      { keywords: ['pomme', 'apple'], food: { name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, category: 'Fruits', unit: '100g' }},
+      { keywords: ['banane', 'banana'], food: { name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, fiber: 2.6, vitaminC: 15, category: 'Fruits', unit: '100g' }},
+      { keywords: ['kiwi jaune', 'kiwi gold', 'kiwi', 'sungold'], food: { name: 'Kiwi jaune', calories: 60, protein: 1.1, carbs: 15, fat: 0.5, fiber: 2, vitaminC: 140, category: 'Fruits', unit: '100g' }},
+      { keywords: ['pomme', 'apple'], food: { name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, fiber: 2.4, vitaminC: 7, category: 'Fruits', unit: '100g' }},
       { keywords: ['yaourt', 'yogurt'], food: { name: 'Yaourt nature 0%', calories: 56, protein: 10, carbs: 4, fat: 0.1, category: 'Produits laitiers', unit: '100g' }},
       { keywords: ['fromage', 'cheese'], food: { name: 'Fromage', calories: 280, protein: 22, carbs: 2.2, fat: 22, category: 'Produits laitiers', unit: '100g' }},
       { keywords: ['bœuf', 'beef'], food: { name: 'Bœuf haché 5%', calories: 137, protein: 20, carbs: 0, fat: 5, category: 'Protéines', unit: '100g' }},
@@ -127,6 +137,11 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, onAddRecipe, isDark
           protein: food.protein * multiplier,
           carbs: food.carbs * multiplier,
           fat: food.fat * multiplier,
+          fiber: (food.fiber || 0) * multiplier,
+          vitaminA: (food.vitaminA || 0) * multiplier,
+          vitaminC: (food.vitaminC || 0) * multiplier,
+          calcium: (food.calcium || 0) * multiplier,
+          iron: (food.iron || 0) * multiplier,
           category: food.category,
           meal,
         confidence: 0.8 + Math.random() * 0.2
@@ -144,6 +159,11 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, onAddRecipe, isDark
           protein: p.nutriments?.proteins_100g || 0,
           carbs: p.nutriments?.carbohydrates_100g || 0,
           fat: p.nutriments?.fat_100g || 0,
+          fiber: p.nutriments?.fiber_100g || 0,
+          vitaminA: p.nutriments?.['vitamin-a_100g'] || 0,
+          vitaminC: p.nutriments?.['vitamin-c_100g'] || 0,
+          calcium: p.nutriments?.['calcium_100g'] || 0,
+          iron: p.nutriments?.['iron_100g'] || 0,
           category: 'Importé',
           meal,
           confidence: 0.6
