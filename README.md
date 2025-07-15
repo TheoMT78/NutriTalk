@@ -24,8 +24,9 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Le suivi des pas affiche le pourcentage exact même au-delà de 100%.
 - Base d'aliments enrichie avec plus de céréales crues et de fruits.
 - Historique enrichi avec graphiques du poids, de l'eau et du nombre de pas.
-- Historique d'exemple de 7 jours pour visualiser immédiatement les graphiques.
+- Historique d'exemple d'un an pour visualiser immédiatement les graphiques.
 - Objectif d'hydratation personnalisable avec des boutons +1L, +500 ml, +250 ml et -250 ml.
 - Nouvelle section "Recette" accessible depuis la barre de navigation.
+- Les graphiques de l'historique permettent désormais de choisir la période (7 jours à un an) et les détails quotidiens sont affichés du plus récent au plus ancien.
 
 Ces fonctionnalités reposent sur l'API publique OpenFoodFacts.

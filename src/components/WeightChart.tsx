@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface WeightPoint {
-  date: string;
+  label: string;
   weight: number;
 }
 
@@ -20,7 +20,7 @@ const WeightChart: React.FC<WeightChartProps> = ({ data, className = '' }) => {
   }
 
   const width = 260;
-  const height = 80;
+  const height = 100;
   const weights = data.map(d => d.weight);
   const minW = Math.min(...weights);
   const maxW = Math.max(...weights);
@@ -35,7 +35,7 @@ const WeightChart: React.FC<WeightChartProps> = ({ data, className = '' }) => {
 
   return (
     <div className={className}>
-      <svg width={width} height={height} className="mx-auto">
+      <svg width={width} height={height + 20} className="mx-auto">
         <polyline
           fill="none"
           stroke="currentColor"
@@ -43,6 +43,17 @@ const WeightChart: React.FC<WeightChartProps> = ({ data, className = '' }) => {
           points={points}
           className="text-blue-500"
         />
+        {data.map((d, i) => (
+          <text
+            key={i}
+            x={(i / (data.length - 1)) * width}
+            y={height + 12}
+            textAnchor="middle"
+            className="text-[10px] fill-current"
+          >
+            {d.label}
+          </text>
+        ))}
       </svg>
     </div>
   );

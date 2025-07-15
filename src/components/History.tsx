@@ -12,6 +12,9 @@ interface HistoryProps {
 const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
   const [currentView, setCurrentView] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [stepsPeriod, setStepsPeriod] = useState<'week' | 'month' | 'sixMonths' | 'year'>('week');
+  const [weightPeriod, setWeightPeriod] = useState<'week' | 'month' | 'threeMonths' | 'sixMonths'>('week');
+  const [waterPeriod, setWaterPeriod] = useState<'week' | 'month' | 'sixMonths' | 'year'>('week');
 
   // Historique vide au premier lancement
   interface HistoryDay {
@@ -26,18 +29,19 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
     meals: number;
   }
 
-  const sampleHistory: HistoryDay[] = Array.from({ length: 7 }).map((_, i) => {
+  // Simuler un an de données pour pouvoir afficher des graphiques étendus
+  const sampleHistory: HistoryDay[] = Array.from({ length: 365 }).map((_, i) => {
     const date = new Date();
-    date.setDate(date.getDate() - (6 - i));
+    date.setDate(date.getDate() - (364 - i));
     return {
       date: date.toISOString().split('T')[0],
       calories: 2000 + (i % 2 === 0 ? 100 : -100),
-      protein: 140 + i,
-      carbs: 250 + i * 5,
-      fat: 70 + i,
-      water: 1800 + i * 100,
-      weight: user.weight + (i - 3) * 0.2,
-      steps: 8000 + i * 500,
+      protein: 140 + (i % 5),
+      carbs: 250 + (i % 10) * 2,
+      fat: 70 + (i % 4),
+      water: 1800 + (i % 7) * 100,
+      weight: parseFloat((user.weight + Math.sin(i / 12) * 0.5).toFixed(1)),
+      steps: 8000 + (i % 20) * 200,
       meals: 3
     };
   });
@@ -49,14 +53,6 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
     return historyData.slice(-days);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', { 
-      weekday: 'short', 
-      day: 'numeric', 
-      month: 'short' 
-    });
-  };
 
   const exportHistory = () => {
     const csvContent = [
@@ -100,15 +96,115 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
   const avgFat = currentData.length
     ? Math.round(currentData.reduce((sum, day) => sum + day.fat, 0) / currentData.length)
     : 0;
-  const avgWater = currentData.length
-    ? Math.round(currentData.reduce((sum, day) => sum + day.water, 0) / currentData.length)
-    : 0;
-  const avgSteps = currentData.length
-    ? Math.round(currentData.reduce((sum, day) => sum + day.steps, 0) / currentData.length)
-    : 0;
-  const avgWeight = currentData.length
-    ? Math.round(currentData.reduce((sum, day) => sum + day.weight, 0) / currentData.length)
-    : 0;
+
+  const getStepChartData = () => {
+    switch (stepsPeriod) {
+      case 'week':
+        return historyData.slice(-7).map(d => ({
+          label: new Date(d.date).toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 1),
+          value: d.steps,
+        }));
+      case 'month':
+        return historyData.slice(-30).map(d => ({
+          label: new Date(d.date).getDate().toString(),
+          value: d.steps,
+        }));
+      case 'sixMonths': {
+        const last = historyData.slice(-182);
+        const arr: { label: string; value: number }[] = [];
+        for (let i = 0; i < last.length; i += 7) {
+          const week = last.slice(i, i + 7);
+          const avg = week.reduce((s, x) => s + x.steps, 0) / week.length;
+          const label = new Date(week[0].date).toLocaleDateString('fr-FR', { month: 'short' });
+          arr.push({ label, value: Math.round(avg) });
+        }
+        return arr;
+      }
+      case 'year': {
+        const months: { label: string; value: number }[] = [];
+        for (let m = 0; m < 12; m++) {
+          const monthData = historyData.filter(d => new Date(d.date).getMonth() === m).slice(-31);
+          if (monthData.length) {
+            const val = monthData.reduce((s, x) => s + x.steps, 0) / monthData.length;
+            const label = new Date(2020, m, 1).toLocaleDateString('fr-FR', { month: 'short' }).charAt(0);
+            months.push({ label, value: Math.round(val) });
+          }
+        }
+        return months;
+      }
+    }
+  };
+
+  const getWaterChartData = () => {
+    switch (waterPeriod) {
+      case 'week':
+        return historyData.slice(-7).map(d => ({
+          label: new Date(d.date).toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 1),
+          value: d.water,
+        }));
+      case 'month':
+        return historyData.slice(-30).map(d => ({ label: new Date(d.date).getDate().toString(), value: d.water }));
+      case 'sixMonths': {
+        const last = historyData.slice(-182);
+        const arr: { label: string; value: number }[] = [];
+        for (let i = 0; i < last.length; i += 7) {
+          const week = last.slice(i, i + 7);
+          const avg = week.reduce((s, x) => s + x.water, 0) / week.length;
+          const label = new Date(week[0].date).toLocaleDateString('fr-FR', { month: 'short' });
+          arr.push({ label, value: Math.round(avg) });
+        }
+        return arr;
+      }
+      case 'year': {
+        const months: { label: string; value: number }[] = [];
+        for (let m = 0; m < 12; m++) {
+          const monthData = historyData.filter(d => new Date(d.date).getMonth() === m).slice(-31);
+          if (monthData.length) {
+            const val = monthData.reduce((s, x) => s + x.water, 0) / monthData.length;
+            const label = new Date(2020, m, 1).toLocaleDateString('fr-FR', { month: 'short' }).charAt(0);
+            months.push({ label, value: Math.round(val) });
+          }
+        }
+        return months;
+      }
+    }
+  };
+
+  const getWeightChartData = () => {
+    const data = weightHistory;
+    if (data.length === 0) return [] as { label: string; weight: number }[];
+    switch (weightPeriod) {
+      case 'week':
+        return data.slice(-7).map(d => ({
+          label: new Date(d.date).toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 1),
+          weight: d.weight,
+        }));
+      case 'month':
+        return data.slice(-30).map(d => ({ label: new Date(d.date).getDate().toString(), weight: d.weight }));
+      case 'threeMonths': {
+        const last = data.slice(-90);
+        const arr: { label: string; weight: number }[] = [];
+        for (let i = 0; i < last.length; i += 30) {
+          const month = last.slice(i, i + 30);
+          const avg = month.reduce((s, x) => s + x.weight, 0) / month.length;
+          const label = new Date(month[0].date).toLocaleDateString('fr-FR', { month: 'short' });
+          arr.push({ label, weight: parseFloat(avg.toFixed(1)) });
+        }
+        return arr;
+      }
+      case 'sixMonths': {
+        const last = data.slice(-180);
+        const arr: { label: string; weight: number }[] = [];
+        for (let i = 0; i < last.length; i += 30) {
+          const month = last.slice(i, i + 30);
+          const avg = month.reduce((s, x) => s + x.weight, 0) / month.length;
+          const label = new Date(month[0].date).toLocaleDateString('fr-FR', { month: 'short' }).charAt(0);
+          arr.push({ label, weight: parseFloat(avg.toFixed(1)) });
+        }
+        return arr;
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -223,97 +319,9 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
         </div>
       </div>
 
-      {/* Graphique des calories */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold mb-6">Évolution des calories</h3>
-
-        {historyData.length === 0 ? (
-          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
-        ) : (
-        <div className="space-y-4">
-          {historyData.slice(-14).map((day) => {
-            const percentage = (day.calories / user.dailyCalories) * 100;
-            const withinRange = percentage >= 95 && percentage <= 105;
-            
-            return (
-              <div key={day.date} className="flex items-center space-x-4">
-                <div className="w-16 text-sm text-gray-600 dark:text-gray-400">
-                  {formatDate(day.date)}
-                </div>
-                <div className="flex-1">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium">{day.calories} kcal</span>
-                    <span className={`text-sm ${withinRange ? 'text-green-500' : 'text-red-500'}`}>
-                      {percentage.toFixed(0)}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        withinRange ? 'bg-green-500' : 'bg-red-500'
-                      }`}
-                      style={{ width: `${Math.min(percentage, 100)}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  {day.meals} repas
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        )}
-      </div>
-
-      {/* Graphique des pas */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold mb-6">Évolution des pas</h3>
-        {historyData.length === 0 ? (
-          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
-        ) : (
-          <StepHistoryChart data={historyData.slice(-7).map(d => ({ date: d.date, steps: d.steps }))} />
-        )}
-        {historyData.length > 0 && (
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Moyenne {avgSteps} pas/jour
-          </p>
-        )}
-      </div>
-
-      {/* Graphique du poids */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold mb-6">Évolution du poids</h3>
-        {weightHistory.length === 0 ? (
-          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
-        ) : (
-          <WeightChart data={weightHistory.slice(-7)} />
-        )}
-        {weightHistory.length > 0 && (
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Poids moyen {avgWeight} kg
-          </p>
-        )}
-      </div>
-
-      {/* Graphique de l'eau */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold mb-6">Hydratation</h3>
-        {historyData.length === 0 ? (
-          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
-        ) : (
-          <StepHistoryChart data={historyData.slice(-7).map(d => ({ date: d.date, steps: d.water }))} />
-        )}
-        {historyData.length > 0 && (
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Moyenne {avgWater} ml/jour
-          </p>
-        )}
-      </div>
-
-      {/* Tableau détaillé */}
+      {/* Détails par jour */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <h3 className="text-lg font-semibold">Détails par jour</h3>
         </div>
 
@@ -348,7 +356,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {historyData.slice(-10).map((day) => (
+              {historyData.slice(-10).reverse().map((day) => (
                 <tr key={day.date} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     {new Date(day.date).toLocaleDateString('fr-FR')}
@@ -356,7 +364,8 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`font-medium ${
                       day.calories > user.dailyCalories ? 'text-red-500' : 'text-green-500'
-                    }`}>
+                    }`}
+                    >
                       {day.calories}
                     </span>
                     <span className="text-gray-500 ml-1">kcal</span>
@@ -383,6 +392,75 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
         </div>
         )}
       </div>
+
+      {/* Graphique des pas */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold">Évolution des pas</h3>
+          <select
+            value={stepsPeriod}
+            onChange={(e) => setStepsPeriod(e.target.value as 'week' | 'month' | 'sixMonths' | 'year')}
+            className="text-sm bg-gray-100 dark:bg-gray-700 rounded px-2 py-1"
+          >
+            <option value="week">7j</option>
+            <option value="month">1 mois</option>
+            <option value="sixMonths">6 mois</option>
+            <option value="year">1 an</option>
+          </select>
+        </div>
+        {historyData.length === 0 ? (
+          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
+        ) : (
+          <StepHistoryChart data={getStepChartData()} />
+        )}
+      </div>
+
+      {/* Graphique du poids */}
+
+      {/* Graphique du poids */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold">Évolution du poids</h3>
+          <select
+            value={weightPeriod}
+            onChange={(e) => setWeightPeriod(e.target.value as 'week' | 'month' | 'threeMonths' | 'sixMonths')}
+            className="text-sm bg-gray-100 dark:bg-gray-700 rounded px-2 py-1"
+          >
+            <option value="week">7j</option>
+            <option value="month">1 mois</option>
+            <option value="threeMonths">3 mois</option>
+            <option value="sixMonths">6 mois</option>
+          </select>
+        </div>
+        {weightHistory.length === 0 ? (
+          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
+        ) : (
+          <WeightChart data={getWeightChartData()} />
+        )}
+      </div>
+
+      {/* Graphique de l'eau */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold">Hydratation</h3>
+          <select
+            value={waterPeriod}
+            onChange={(e) => setWaterPeriod(e.target.value as 'week' | 'month' | 'sixMonths' | 'year')}
+            className="text-sm bg-gray-100 dark:bg-gray-700 rounded px-2 py-1"
+          >
+            <option value="week">7j</option>
+            <option value="month">1 mois</option>
+            <option value="sixMonths">6 mois</option>
+            <option value="year">1 an</option>
+          </select>
+        </div>
+        {historyData.length === 0 ? (
+          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
+        ) : (
+          <StepHistoryChart data={getWaterChartData()} />
+        )}
+      </div>
+
     </div>
   );
 };
