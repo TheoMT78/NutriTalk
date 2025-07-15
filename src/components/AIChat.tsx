@@ -181,18 +181,26 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
     setIsLoading(false);
   };
 
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
   const handleVoiceInput = () => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('La reconnaissance vocale n\'est pas supportée par votre navigateur');
+      alert("La reconnaissance vocale n'est pas supportée par votre navigateur");
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current?.stop();
       return;
     }
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = new SpeechRecognition();
-    
+    recognitionRef.current = recognition;
+
     recognition.lang = 'fr-FR';
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.continuous = true;
+    recognition.interimResults = true;
 
     recognition.onstart = () => {
       setIsListening(true);
@@ -203,7 +211,6 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
         .map(r => r[0].transcript)
         .join(' ');
       setInput(transcript);
-      setIsListening(false);
     };
 
     recognition.onerror = () => {

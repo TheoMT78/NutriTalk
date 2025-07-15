@@ -245,7 +245,7 @@ interface HistoryDay {
             setShowDatePicker(false);
             setCalendarDate(new Date(year, month, d));
           }}
-          className={`w-16 h-16 text-base flex items-center justify-center rounded ${color} hover:brightness-110`}
+          className={`w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-sm flex items-center justify-center rounded ${color} hover:brightness-110`}
         >
           {d}
         </button>
@@ -253,7 +253,7 @@ interface HistoryDay {
     }
 
     return (
-      <div className="absolute z-10 mt-1 right-0 bg-gray-800 text-white p-2 rounded shadow-lg">
+      <div className="absolute z-10 mt-1 right-0 bg-gray-800 text-white p-2 rounded shadow-lg w-72 sm:w-80 md:w-[28rem]">
         <div className="flex items-center justify-between mb-2 text-sm">
           <button
             onClick={() => setCalendarDate(new Date(year, month - 1, 1))}
