@@ -14,7 +14,6 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [stepsPeriod, setStepsPeriod] = useState<'week' | 'month' | 'sixMonths' | 'year'>('week');
   const [weightPeriod, setWeightPeriod] = useState<'week' | 'month' | 'threeMonths' | 'sixMonths'>('week');
-  const [waterPeriod, setWaterPeriod] = useState<'week' | 'month' | 'sixMonths' | 'year'>('week');
   const [filterDate, setFilterDate] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -167,78 +166,10 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
         return arr;
       }
       default:
-        return [];
+        return undefined;
     }
   };
 
-  const getWaterChartData = () => {
-    switch (waterPeriod) {
-      case 'week':
-        return historyData.slice(-7).map(d => ({
-          label: new Date(d.date)
-            .toLocaleDateString('fr-FR', { weekday: 'short' })
-            .slice(0, 3)
-            .toUpperCase(),
-          value: d.water,
-        }));
-      case 'month':
-        return historyData.slice(-30).map(d => ({ label: new Date(d.date).getDate().toString(), value: d.water }));
-      case 'sixMonths': {
-        const last = historyData.slice(-182);
-        const arr: { label: string; value: number }[] = [];
-        for (let i = 0; i < last.length; i += 7) {
-          const week = last.slice(i, i + 7);
-          const avg = week.reduce((s, x) => s + x.water, 0) / week.length;
-          const label = new Date(week[0].date).toLocaleDateString('fr-FR', { month: 'short' });
-          arr.push({ label, value: Math.round(avg) });
-        }
-        return arr;
-      }
-      case 'year': {
-        const months: { label: string; value: number }[] = [];
-        for (let m = 0; m < 12; m++) {
-          const monthData = historyData.filter(d => new Date(d.date).getMonth() === m).slice(-31);
-          if (monthData.length) {
-            const val = monthData.reduce((s, x) => s + x.water, 0) / monthData.length;
-            const label = new Date(2020, m, 1)
-              .toLocaleDateString('fr-FR', { month: 'short' })
-              .charAt(0)
-              .toUpperCase();
-            months.push({ label, value: Math.round(val) });
-          }
-        }
-        return months;
-      }
-    }
-  };
-
-  const getWaterChartTicks = () => {
-    switch (waterPeriod) {
-      case 'month': {
-        const last = historyData.slice(-30);
-        const arr: { index: number; label: string }[] = [];
-        for (let i = 0; i < last.length; i += 7) {
-          arr.push({ index: i, label: new Date(last[i].date).getDate().toString() });
-        }
-        return arr;
-      }
-      case 'sixMonths': {
-        const last = historyData.slice(-182);
-        const arr: { index: number; label: string }[] = [];
-        let weekIdx = 0;
-        for (let i = 0; i < last.length; i += 7) {
-          if (i % 28 === 0) {
-            const label = new Date(last[i].date).toLocaleDateString('fr-FR', { month: 'short' });
-            arr.push({ index: weekIdx, label });
-          }
-          weekIdx++;
-        }
-        return arr;
-      }
-      default:
-        return [];
-    }
-  };
 
   const getWeightChartData = () => {
     const data = weightHistory;
@@ -394,7 +325,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
 
       {/* Détails par jour */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center space-x-2">
           <h3 className="text-lg font-semibold">Détails par jour</h3>
           <div className="relative">
             <button
@@ -408,7 +339,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
                 type="date"
                 value={filterDate}
                 onChange={(e) => setFilterDate(e.target.value)}
-                className="absolute right-0 mt-1 text-sm bg-gray-100 dark:bg-gray-700 rounded"
+                className="absolute left-0 mt-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded"
               />
             )}
           </div>
@@ -445,8 +376,18 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {(filterDate ? historyData.filter(d => d.date === filterDate) : historyData.slice(-10).reverse()).map((day) => (
-                <tr key={day.date} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+              {(filterDate ? historyData.filter(d => d.date === filterDate) : historyData.slice(-10).reverse()).map((day) => {
+                const diff = Math.abs(day.calories - user.dailyCalories);
+                let rowColor = '';
+                if (day.calories === 0) {
+                  rowColor = 'bg-red-100 dark:bg-red-900';
+                } else if (diff <= user.dailyCalories * 0.05) {
+                  rowColor = 'bg-green-100 dark:bg-green-900';
+                } else if (day.calories < user.dailyCalories - 500) {
+                  rowColor = 'bg-orange-100 dark:bg-orange-900';
+                }
+                return (
+                <tr key={day.date} className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${rowColor}`}>
                   <td className="px-4 py-2 whitespace-nowrap font-medium">
                     {new Date(day.date).toLocaleDateString('fr-FR')}
                   </td>
@@ -475,7 +416,8 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
                     {day.weight}kg
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -525,28 +467,6 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
           <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
         ) : (
           <WeightChart data={getWeightChartData()} />
-        )}
-      </div>
-
-      {/* Graphique de l'eau */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold">Hydratation</h3>
-          <select
-            value={waterPeriod}
-            onChange={(e) => setWaterPeriod(e.target.value as 'week' | 'month' | 'sixMonths' | 'year')}
-            className="text-sm bg-gray-100 dark:bg-gray-700 rounded px-2 py-1"
-          >
-            <option value="week">7j</option>
-            <option value="month">1 mois</option>
-            <option value="sixMonths">6 mois</option>
-            <option value="year">1 an</option>
-          </select>
-        </div>
-        {historyData.length === 0 ? (
-          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
-        ) : (
-          <StepHistoryChart mode="water" data={getWaterChartData()} ticks={getWaterChartTicks()} />
         )}
       </div>
 

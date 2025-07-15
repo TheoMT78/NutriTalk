@@ -24,6 +24,7 @@ const StepHistoryChart: React.FC<StepHistoryChartProps> = ({ data, className = '
   const width = 260;
   const height = 100;
   const marginLeft = 30;
+  const marginTop = 10;
   const innerWidth = width - marginLeft;
   const maxVal = Math.max(...data.map(d => d.value));
   const barWidth = innerWidth / data.length;
@@ -50,28 +51,28 @@ const StepHistoryChart: React.FC<StepHistoryChartProps> = ({ data, className = '
 
   return (
     <div className={className}>
-      <svg width={width} height={height + 20} className="mx-auto">
+      <svg width={width} height={height + marginTop + 20} className="mx-auto">
         {/* axes */}
         <line
           x1={marginLeft}
-          y1={height}
+          y1={marginTop + height}
           x2={width}
-          y2={height}
+          y2={marginTop + height}
           className="stroke-gray-300 dark:stroke-gray-600"
         />
         {yTicks.map((val, i) => (
           <g key={i}>
             <line
               x1={marginLeft}
-              y1={height - (val / maxTick) * height}
+              y1={marginTop + height - (val / maxTick) * height}
               x2={width}
-              y2={height - (val / maxTick) * height}
+              y2={marginTop + height - (val / maxTick) * height}
               className="stroke-gray-200 dark:stroke-gray-700"
               strokeWidth={0.5}
             />
             <text
               x={marginLeft - 2}
-              y={height - (val / maxTick) * height}
+              y={marginTop + height - (val / maxTick) * height}
               textAnchor="end"
               dominantBaseline="central"
               className="text-[10px] fill-current"
@@ -84,7 +85,7 @@ const StepHistoryChart: React.FC<StepHistoryChartProps> = ({ data, className = '
         {data.map((d, i) => {
           const barHeight = (d.value / maxTick) * height;
           const x = marginLeft + i * barWidth + barWidth * 0.1;
-          const y = height - barHeight;
+          const y = marginTop + height - barHeight;
           return (
             <g key={i}>
               <rect
@@ -98,19 +99,19 @@ const StepHistoryChart: React.FC<StepHistoryChartProps> = ({ data, className = '
           );
         })}
         {/* x-axis ticks */}
-        {(ticks || data.map((d, i) => ({ index: i, label: d.label }))).map(t => (
+        {(ticks ?? data.map((d, i) => ({ index: i, label: d.label }))).map(t => (
           <g key={t.index}>
             <line
               x1={marginLeft + (t.index + 0.5) * barWidth}
-              y1={height}
+              y1={marginTop + height}
               x2={marginLeft + (t.index + 0.5) * barWidth}
-              y2={height + 4}
+              y2={marginTop + height + 4}
               className="stroke-gray-400"
               strokeWidth={0.5}
             />
             <text
               x={marginLeft + (t.index + 0.5) * barWidth}
-              y={height + 12}
+              y={marginTop + height + 12}
               textAnchor="middle"
               className="text-[10px] fill-current"
             >
