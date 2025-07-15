@@ -135,6 +135,34 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
     }
   };
 
+  const getStepChartTicks = () => {
+    switch (stepsPeriod) {
+      case 'month': {
+        const last = historyData.slice(-30);
+        const arr: { index: number; label: string }[] = [];
+        for (let i = 0; i < last.length; i += 7) {
+          arr.push({ index: i, label: new Date(last[i].date).getDate().toString() });
+        }
+        return arr;
+      }
+      case 'sixMonths': {
+        const last = historyData.slice(-182);
+        const arr: { index: number; label: string }[] = [];
+        let weekIdx = 0;
+        for (let i = 0; i < last.length; i += 7) {
+          if (i % 28 === 0) {
+            const label = new Date(last[i].date).toLocaleDateString('fr-FR', { month: 'short' });
+            arr.push({ index: weekIdx, label });
+          }
+          weekIdx++;
+        }
+        return arr;
+      }
+      default:
+        return [];
+    }
+  };
+
   const getWaterChartData = () => {
     switch (waterPeriod) {
       case 'week':
@@ -167,6 +195,34 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
         }
         return months;
       }
+    }
+  };
+
+  const getWaterChartTicks = () => {
+    switch (waterPeriod) {
+      case 'month': {
+        const last = historyData.slice(-30);
+        const arr: { index: number; label: string }[] = [];
+        for (let i = 0; i < last.length; i += 7) {
+          arr.push({ index: i, label: new Date(last[i].date).getDate().toString() });
+        }
+        return arr;
+      }
+      case 'sixMonths': {
+        const last = historyData.slice(-182);
+        const arr: { index: number; label: string }[] = [];
+        let weekIdx = 0;
+        for (let i = 0; i < last.length; i += 7) {
+          if (i % 28 === 0) {
+            const label = new Date(last[i].date).toLocaleDateString('fr-FR', { month: 'short' });
+            arr.push({ index: weekIdx, label });
+          }
+          weekIdx++;
+        }
+        return arr;
+      }
+      default:
+        return [];
     }
   };
 
@@ -411,7 +467,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
         {historyData.length === 0 ? (
           <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
         ) : (
-          <StepHistoryChart data={getStepChartData()} />
+          <StepHistoryChart data={getStepChartData()} ticks={getStepChartTicks()} />
         )}
       </div>
 
@@ -457,7 +513,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
         {historyData.length === 0 ? (
           <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
         ) : (
-          <StepHistoryChart data={getWaterChartData()} />
+          <StepHistoryChart data={getWaterChartData()} ticks={getWaterChartTicks()} />
         )}
       </div>
 
