@@ -41,6 +41,7 @@ export interface DailyLog {
   totalFat: number;
   water: number;
   steps: number;
+  weight?: number;
 }
 
 export interface FoodItem {

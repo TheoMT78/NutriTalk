@@ -464,11 +464,17 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
           <div>
             <label className="block text-sm font-medium mb-2">Objectif de pas</label>
             {isEditing ? (
-              <input
-                type="number"
+              <NumberStepper
                 value={formData.stepGoal}
-                onChange={(e) => setFormData(prev => ({ ...prev, stepGoal: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700"
+                onChange={(val) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    stepGoal: typeof val === 'number' ? val : val(prev.stepGoal)
+                  }))
+                }
+                locked={false}
+                onToggleLock={() => {}}
+                showLock={false}
               />
             ) : (
               <p className="text-gray-700 dark:text-gray-300">{user.stepGoal} pas</p>

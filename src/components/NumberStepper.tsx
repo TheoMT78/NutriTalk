@@ -7,9 +7,10 @@ interface NumberStepperProps {
   locked: boolean;
   onToggleLock: () => void;
   className?: string;
+  showLock?: boolean;
 }
 
-const NumberStepper: React.FC<NumberStepperProps> = ({ value, onChange, locked, onToggleLock, className='' }) => {
+const NumberStepper: React.FC<NumberStepperProps> = ({ value, onChange, locked, onToggleLock, className='', showLock = true }) => {
   const intervalRef = useRef<NodeJS.Timeout>();
   const stepRef = useRef(1);
 
@@ -46,9 +47,11 @@ const NumberStepper: React.FC<NumberStepperProps> = ({ value, onChange, locked, 
       <button type="button" onMouseDown={() => start(1)} onMouseUp={stop} onMouseLeave={stop} className="px-1 py-0.5 border rounded" aria-label="Augmenter">
         <Plus size={14} />
       </button>
-      <button type="button" onClick={onToggleLock} className="ml-1 text-gray-600 dark:text-gray-300" aria-label="Verrouiller">
-        {locked ? <Lock size={16} /> : <Unlock size={16} />}
-      </button>
+      {showLock && (
+        <button type="button" onClick={onToggleLock} className="ml-1 text-gray-600 dark:text-gray-300" aria-label="Verrouiller">
+          {locked ? <Lock size={16} /> : <Unlock size={16} />}
+        </button>
+      )}
     </div>
   );
 };

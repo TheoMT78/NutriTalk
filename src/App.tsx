@@ -46,7 +46,8 @@ function App() {
     totalCarbs: 0,
     totalFat: 0,
     water: 0,
-    steps: 0
+    steps: 0,
+    weight: defaultUser.weight
   });
 
   const [loggedIn, setLoggedIn] = useLocalStorage<boolean>('nutritalk-logged-in', false);
@@ -130,6 +131,12 @@ function App() {
     }));
   };
 
+  const updateWeight = (delta: number) => {
+    const newWeight = Math.max(0, user.weight + delta);
+    setUser(prev => ({ ...prev, weight: newWeight }));
+    setDailyLog(prev => ({ ...prev, weight: newWeight }));
+  };
+
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
@@ -140,6 +147,7 @@ function App() {
             onRemoveEntry={removeFoodEntry}
             onUpdateWater={updateWater}
             onUpdateSteps={updateSteps}
+            onUpdateWeight={updateWeight}
           />
         );
       case 'search':
@@ -156,6 +164,7 @@ function App() {
             onRemoveEntry={removeFoodEntry}
             onUpdateWater={updateWater}
             onUpdateSteps={updateSteps}
+            onUpdateWeight={updateWeight}
           />
         );
     }

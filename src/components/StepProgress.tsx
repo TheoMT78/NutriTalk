@@ -14,11 +14,12 @@ const StepProgress: React.FC<StepProgressProps> = ({ current, target, onUpdate, 
   const percentage = Math.min((current / target) * 100, 100);
   const extraSteps = Math.max(0, current - 4000);
   const caloriesBurned = extraSteps * CALORIES_PER_STEP;
+  const reached = percentage >= 100;
   return (
     <div className={className}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <Footprints className="text-teal-500 mr-2" size={20} />
+          <Footprints className={reached ? 'text-red-500 mr-2' : 'text-teal-500 mr-2'} size={20} />
           Pas
         </h3>
         <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -40,11 +41,11 @@ const StepProgress: React.FC<StepProgressProps> = ({ current, target, onUpdate, 
             stroke="currentColor"
             strokeWidth="2"
             strokeDasharray={`${percentage}, 100`}
-            className="text-teal-500 transition-all duration-500"
+            className={`${reached ? 'text-red-500' : 'text-teal-500'} transition-all duration-500`}
           />
         </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-2xl font-bold text-teal-500">
+        <div className={`text-2xl font-bold ${reached ? 'text-red-500' : 'text-teal-500'}`}>
           {percentage.toFixed(0)}%
         </div>
       </div>

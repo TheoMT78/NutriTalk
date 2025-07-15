@@ -204,7 +204,7 @@ const History: React.FC<HistoryProps> = ({ user }) => {
         <div className="space-y-4">
           {historyData.slice(-14).map((day) => {
             const percentage = (day.calories / user.dailyCalories) * 100;
-            const withinRange = percentage >= 90 && percentage <= 110;
+            const withinRange = percentage >= 95 && percentage <= 105;
             
             return (
               <div key={day.date} className="flex items-center space-x-4">
