@@ -3,7 +3,8 @@ import { Search, Plus, Star, X } from 'lucide-react';
 import { FoodItem } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import QRScanner from './QRScanner';
-import { OFFProduct, searchProductFallback } from '../utils/openFoodFacts';
+import { OFFProduct, searchProduct, searchProductFallback } from '../utils/openFoodFacts';
+
 
 interface FoodSearchProps {
   onAddFood: (food: {
@@ -97,7 +98,8 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
         return;
       }
       if (filteredFoods.length > 0) return;
-      const results = await searchProductFallback(searchTerm);
+const results = await searchProductFallback(searchTerm);
+
       const mapped: FoodItem[] = results.slice(0, 5).map(p => ({
         id: p.code,
         name: p.product_name || 'Produit',
@@ -105,11 +107,12 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
         protein: p.nutriments?.proteins_100g || 0,
         carbs: p.nutriments?.carbohydrates_100g || 0,
         fat: p.nutriments?.fat_100g || 0,
-        fiber: p.nutriments?.fiber_100g || 0,
-        vitaminA: p.nutriments?.['vitamin-a_100g'] || 0,
-        vitaminC: p.nutriments?.['vitamin-c_100g'] || 0,
-        calcium: p.nutriments?.['calcium_100g'] || 0,
-        iron: p.nutriments?.['iron_100g'] || 0,
+fiber: p.nutriments?.fiber_100g || 0,
+vitaminA: p.nutriments?.['vitamin-a_100g'] || 0,
+vitaminC: p.nutriments?.['vitamin-c_100g'] || 0,
+calcium: p.nutriments?.['calcium_100g'] || 0,
+iron: p.nutriments?.['iron_100g'] || 0,
+
         category: 'Importé',
         unit: '100g',
         isCustom: true,
@@ -203,21 +206,22 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
       protein: p.nutriments?.proteins_100g || 0,
       carbs: p.nutriments?.carbohydrates_100g || 0,
       fat: p.nutriments?.fat_100g || 0,
-      fiber: p.nutriments?.fiber_100g || 0,
-      vitaminA: p.nutriments?.['vitamin-a_100g'] || 0,
-      vitaminC: p.nutriments?.['vitamin-c_100g'] || 0,
-      calcium: p.nutriments?.['calcium_100g'] || 0,
-      iron: p.nutriments?.['iron_100g'] || 0,
-      category: 'Importé',
-      unit: '100g',
-      isCustom: true
-    };
+fiber: p.nutriments?.fiber_100g || 0,
+vitaminA: p.nutriments?.['vitamin-a_100g'] || 0,
+vitaminC: p.nutriments?.['vitamin-c_100g'] || 0,
+calcium: p.nutriments?.['calcium_100g'] || 0,
+iron: p.nutriments?.['iron_100g'] || 0,
+category: 'Importé',
+unit: '100g',
+isCustom: true
+};
 
-    setCustomFoods(prev =>
-      prev.some(f => f.id === item.id) ? prev : [...prev, item]
-    );
+setCustomFoods(prev =>
+  prev.some(f => f.id === item.id) ? prev : [...prev, item]
+);
 
-    alert(`${item.name} ajouté à vos aliments personnalisés`);
+alert(`${item.name} ajouté à vos aliments personnalisés`);
+
   };
 
   return (

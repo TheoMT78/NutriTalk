@@ -46,4 +46,5 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Les produits scannés sont enregistrés automatiquement pour enrichir votre base personnelle.
 - Les graphiques de l'historique permettent désormais de choisir la période (7 jours à un an) et les détails quotidiens sont affichés du plus récent au plus ancien.
 
+
 Ces fonctionnalités reposent sur l'API publique OpenFoodFacts.

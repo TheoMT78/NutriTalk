@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { computeDailyTargets, calculateMacroTargets } from '../utils/nutrition';
-import { User as UserIcon, Settings, Target, Activity, Palette } from 'lucide-react';
+import { User as UserIcon, Settings, Target, Activity, Palette, Download, Upload } from 'lucide-react';
 import NumberStepper from './NumberStepper';
+
 import { User as UserType } from '../types';
 
 interface ProfileProps {
   user: UserType;
   onUpdateUser: (user: UserType) => void;
-  onLogout?: () => void;
+onLogout?: () => void;
+
 }
 
 const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
@@ -118,6 +120,18 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
       goal: formData.goal,
     }).calories;
   };
+const importData = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target?.result as string);
+      if (data.profile) {
+        onUpdateUser(data.profile);
+        setFo
+
   return (
     <div className="space-y-6">
       {/* Header */}

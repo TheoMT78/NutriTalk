@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Calendar, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, TrendingUp, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+
 import { User } from '../types';
 import WeightChart from './WeightChart';
 import StepHistoryChart from './StepHistoryChart';
@@ -334,7 +335,47 @@ interface HistoryDay {
         </div>
       </div>
 
-      {/* Détails par jour */}
+{/* Graphique des calories */}
+<div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+  <h3 className="text-lg font-semibold mb-6">Évolution des calories</h3>
+  
+  <div className="space-y-4">
+    {historyData.slice(-14).map((day) => {
+      const percentage = (day.calories / user.dailyCalories) * 100;
+      const isOverTarget = day.calories > user.dailyCalories;
+      
+      return (
+        <div key={day.date} className="flex items-center space-x-4">
+          <div className="w-16 text-sm text-gray-600 dark:text-gray-400">
+            {formatDate(day.date)}
+          </div>
+          <div className="flex-1">
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-sm font-medium">{day.calories} kcal</span>
+              <span className={`text-sm ${isOverTarget ? 'text-red-500' : 'text-green-500'}`}>
+                {percentage.toFixed(0)}%
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div 
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  isOverTarget ? 'bg-red-500' : 'bg-green-500'
+                }`}
+                style={{ width: `${Math.min(percentage, 100)}%` }}
+              />
+            </div>
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            {day.meals} repas
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+{/* Tableau détaillé */}
+
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center space-x-2">
           <h3 className="text-lg font-semibold">Détails par jour</h3>
