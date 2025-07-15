@@ -3,7 +3,7 @@ import { Search, Plus, Star, X } from 'lucide-react';
 import { FoodItem } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import QRScanner from './QRScanner';
-import { OFFProduct, searchProductFallback } from '../utils/openFoodFacts';
+import { OFFProduct, searchProduct, searchProductFallback } from '../utils/openFoodFacts';
 
 interface FoodSearchProps {
   onAddFood: (food: {
@@ -97,19 +97,23 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
         return;
       }
       if (filteredFoods.length > 0) return;
-      const results = await searchProductFallback(searchTerm);
-      const mapped: FoodItem[] = results.slice(0, 5).map(p => ({
-        id: p.code,
-        name: p.product_name || 'Produit',
-        calories: p.nutriments?.['energy-kcal_100g'] || 0,
-        protein: p.nutriments?.proteins_100g || 0,
-        carbs: p.nutriments?.carbohydrates_100g || 0,
-        fat: p.nutriments?.fat_100g || 0,
-        fiber: p.nutriments?.fiber_100g || 0,
-        vitaminA: p.nutriments?.['vitamin-a_100g'] || 0,
-        vitaminC: p.nutriments?.['vitamin-c_100g'] || 0,
-        calcium: p.nutriments?.['calcium_100g'] || 0,
-        iron: p.nutriments?.['iron_100g'] || 0,
+
+const results = await searchProductFallback(searchTerm);
+
+const mapped: FoodItem[] = results.slice(0, 5).map(p => ({
+  id: p.code,
+  name: p.product_name || 'Produit',
+  calories: p.nutrients?.['energy-kcal_100g'] || 0,
+  protein: p.nutrients?.proteins_100g || 0,
+  carbs: p.nutrients?.carbohydrates_100g || 0,
+  fat: p.nutrients?.fat_100g || 0,
+  fiber: p.nutrients?.fiber_100g || 0,
+  vitaminA: p.nutrients?.['vitamin-a_100g'] || 0,
+  vitaminC: p.nutrients?.['vitamin-c_100g'] || 0,
+  calcium: p.nutrients?.['calcium_100g'] || 0,
+  iron: p.nutrients?.['iron_100g'] || 0,
+}));
+
         category: 'Importé',
         unit: '100g',
         isCustom: true,
@@ -196,16 +200,19 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
   };
 
   const handleScanResult = (p: OFFProduct) => {
-    setNewFood({
-      name: p.product_name || 'Produit',
-      calories: (p.nutriments?.['energy-kcal_100g'] || 0).toString(),
-      protein: (p.nutriments?.proteins_100g || 0).toString(),
-      carbs: (p.nutriments?.carbohydrates_100g || 0).toString(),
-      fat: (p.nutriments?.fat_100g || 0).toString(),
-      category: 'Importé',
-      unit: '100g',
-    });
-    setShowAddForm(true);
+const item: FoodItem = {
+  id: p.code,
+  name: p.product_name || 'Produit',
+  calories: (p.nutrients?.['energy-kcal_100g'] || 0).toString(),
+  protein: (p.nutrients?.proteins_100g || 0).toString(),
+  carbs: (p.nutrients?.carbohydrates_100g || 0).toString(),
+  fat: (p.nutrients?.fat_100g || 0).toString(),
+  category: 'Importé',
+  unit: '100g',
+  isCustom: true,
+};
+setCustomFoods(prev => [...prev, item]);
+
   };
 
   return (

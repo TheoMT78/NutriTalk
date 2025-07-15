@@ -1,6 +1,11 @@
 import React from 'react';
+import React from 'react';
 import { Bell, Sun, Moon, Home, Search, BarChart3, UserCircle, BookOpen } from 'lucide-react';
+import { User as UserType } from '../types';
+
 interface HeaderProps {
+  user: UserType;
+
   currentView: string;
   onViewChange: (view: string) => void;
   isDarkMode: boolean;

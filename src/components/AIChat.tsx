@@ -291,9 +291,11 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, onAddRecipe, isDark
     };
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
+
       const transcript = Array.from(event.results)
         .map(r => r[0].transcript)
         .join(' ');
+
       setInput(transcript);
     };
 

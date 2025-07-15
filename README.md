@@ -42,5 +42,5 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Nouvelle section "Recette" accessible depuis la barre de navigation.
 - L'assistant IA peut aussi extraire une recette dictée pour l'ajouter aux recettes.
 - Les graphiques de l'historique permettent désormais de choisir la période (7 jours à un an) et les détails quotidiens sont affichés du plus récent au plus ancien.
-
+- Possibilité de scanner un code-barres pour importer automatiquement un aliment.
 Ces fonctionnalités reposent sur l'API publique OpenFoodFacts.
