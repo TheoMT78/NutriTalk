@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { BrowserMultiFormatReader } from '@zxing/browser';
 import { fetchProductByBarcode, OFFProduct } from '../utils/openFoodFacts';
 
 type BarcodeDetectorResult = { rawValue: string };
@@ -14,15 +15,12 @@ interface QRScannerProps {
 const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState('');
+  const readerRef = useRef<BrowserMultiFormatReader | null>(null);
 
   useEffect(() => {
     const vid = videoRef.current;
     const start = async () => {
       const Detector = (window as unknown as { BarcodeDetector?: BarcodeDetectorClass }).BarcodeDetector;
-      if (!Detector) {
-        setError("Votre navigateur ne supporte pas la détection de codes-barres.");
-        return;
-      }
       const constraints = { video: { facingMode: 'environment' } };
       try {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -30,27 +28,42 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
           videoRef.current.srcObject = stream;
           await videoRef.current.play();
         }
-        const detector = new Detector({ formats: ['ean_13', 'qr_code'] });
-        const scan = async () => {
-          if (!videoRef.current) return;
-          try {
-            const barcodes = await detector.detect(videoRef.current);
-            if (barcodes.length > 0) {
-              const code = barcodes[0].rawValue;
-              const product = await fetchProductByBarcode(code);
+
+        if (Detector) {
+          const detector = new Detector({ formats: ['ean_13', 'qr_code'] });
+          const scan = async () => {
+            if (!videoRef.current) return;
+            try {
+              const barcodes = await detector.detect(videoRef.current);
+              if (barcodes.length > 0) {
+                const code = barcodes[0].rawValue;
+                const product = await fetchProductByBarcode(code);
+                if (product) {
+                  onResult(product);
+                  onClose();
+                }
+              }
+            } catch {
+              /* ignore */
+            }
+            requestAnimationFrame(scan);
+          };
+          requestAnimationFrame(scan);
+        } else {
+          const reader = new BrowserMultiFormatReader();
+          readerRef.current = reader;
+          reader.decodeFromVideoDevice(undefined, videoRef.current!, async result => {
+            if (result) {
+              const product = await fetchProductByBarcode(result.getText());
               if (product) {
                 onResult(product);
                 onClose();
               }
             }
-          } catch {
-            // ignore
-          }
-          requestAnimationFrame(scan);
-        };
-        requestAnimationFrame(scan);
+          });
+        }
       } catch {
-        setError('Impossible d\'accéder à la caméra');
+        setError("Impossible d'accéder à la caméra");
       }
     };
     start();
@@ -58,6 +71,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
       if (vid?.srcObject) {
         (vid.srcObject as MediaStream).getTracks().forEach(t => t.stop());
       }
+      readerRef.current?.reset();
     };
   }, [onResult, onClose]);
 

@@ -103,7 +103,10 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
     switch (stepsPeriod) {
       case 'week':
         return historyData.slice(-7).map(d => ({
-          label: new Date(d.date).toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 3),
+          label: new Date(d.date)
+            .toLocaleDateString('fr-FR', { weekday: 'short' })
+            .slice(0, 3)
+            .toUpperCase(),
           value: d.steps,
         }));
       case 'month':
@@ -128,7 +131,10 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
           const monthData = historyData.filter(d => new Date(d.date).getMonth() === m).slice(-31);
           if (monthData.length) {
             const val = monthData.reduce((s, x) => s + x.steps, 0) / monthData.length;
-            const label = new Date(2020, m, 1).toLocaleDateString('fr-FR', { month: 'short' }).charAt(0);
+            const label = new Date(2020, m, 1)
+              .toLocaleDateString('fr-FR', { month: 'short' })
+              .charAt(0)
+              .toUpperCase();
             months.push({ label, value: Math.round(val) });
           }
         }
@@ -169,7 +175,10 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
     switch (waterPeriod) {
       case 'week':
         return historyData.slice(-7).map(d => ({
-          label: new Date(d.date).toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 3),
+          label: new Date(d.date)
+            .toLocaleDateString('fr-FR', { weekday: 'short' })
+            .slice(0, 3)
+            .toUpperCase(),
           value: d.water,
         }));
       case 'month':
@@ -191,7 +200,10 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
           const monthData = historyData.filter(d => new Date(d.date).getMonth() === m).slice(-31);
           if (monthData.length) {
             const val = monthData.reduce((s, x) => s + x.water, 0) / monthData.length;
-            const label = new Date(2020, m, 1).toLocaleDateString('fr-FR', { month: 'short' }).charAt(0);
+            const label = new Date(2020, m, 1)
+              .toLocaleDateString('fr-FR', { month: 'short' })
+              .charAt(0)
+              .toUpperCase();
             months.push({ label, value: Math.round(val) });
           }
         }
@@ -256,7 +268,10 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
         for (let i = 0; i < last.length; i += 30) {
           const month = last.slice(i, i + 30);
           const avg = month.reduce((s, x) => s + x.weight, 0) / month.length;
-          const label = new Date(month[0].date).toLocaleDateString('fr-FR', { month: 'short' }).charAt(0);
+          const label = new Date(month[0].date)
+            .toLocaleDateString('fr-FR', { month: 'short' })
+            .charAt(0)
+            .toUpperCase();
           arr.push({ label, weight: parseFloat(avg.toFixed(1)) });
         }
         return arr;
