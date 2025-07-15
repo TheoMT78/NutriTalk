@@ -45,9 +45,9 @@ export function calculateTDEE({ weight, height, age, gender, activityLevel, goal
 }
 
 export function calculateMacroTargets(calories: number): Omit<MacroTargets, 'calories'> {
-  const proteinCalories = calories * 0.3; // 30% protein
-  const fatCalories = calories * 0.25; // 25% fat
-  const carbsCalories = calories - proteinCalories - fatCalories; // rest carbs
+  const proteinCalories = calories * 0.25; // 25% protéines
+  const fatCalories = calories * 0.25; // 25% lipides
+  const carbsCalories = calories - proteinCalories - fatCalories; // 50% glucides
   return {
     protein: Math.round(proteinCalories / 4),
     carbs: Math.round(carbsCalories / 4),

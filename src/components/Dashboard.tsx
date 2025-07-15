@@ -2,6 +2,7 @@ import React from 'react';
 import { Target, TrendingUp, Droplets, Trash2, Edit3, Coffee, Utensils, Moon as Dinner, Apple } from 'lucide-react';
 import { User, DailyLog } from '../types';
 import MacroChart from './MacroChart';
+import MacroDetailsModal from './MacroDetailsModal';
 import StepProgress, { CALORIES_PER_STEP } from './StepProgress';
 import CalorieProgress from './CalorieProgress';
 import WeightChart from './WeightChart';
@@ -50,6 +51,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   const caloriesRemaining = totalGoal - dailyLog.totalCalories;
   const extraCarbs = stepsCalories / 4;
   const totalCarbGoal = user.dailyCarbs + extraCarbs;
+
+  const [showMacros, setShowMacros] = React.useState(false);
 
   const groupedEntries = dailyLog.entries.reduce((acc, entry) => {
     if (!acc[entry.meal]) {
@@ -149,12 +152,14 @@ const Dashboard: React.FC<DashboardProps> = ({
 
       {/* Graphiques */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <CalorieProgress
-          consumed={dailyLog.totalCalories}
-          burned={stepsCalories}
-          target={user.dailyCalories}
-          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
-        />
+        <div onClick={() => setShowMacros(true)} className="cursor-pointer">
+          <CalorieProgress
+            consumed={dailyLog.totalCalories}
+            burned={stepsCalories}
+            target={user.dailyCalories}
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
+          />
+        </div>
         <MacroChart
           protein={dailyLog.totalProtein}
           carbs={dailyLog.totalCarbs}
@@ -313,6 +318,9 @@ const Dashboard: React.FC<DashboardProps> = ({
           })}
         </div>
       </div>
+      {showMacros && (
+        <MacroDetailsModal user={user} log={dailyLog} onClose={() => setShowMacros(false)} />
+      )}
     </div>
   );
 };

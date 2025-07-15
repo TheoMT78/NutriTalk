@@ -9,6 +9,7 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Possibilité de scanner un code-barres pour importer automatiquement un aliment.
   Si le navigateur ne supporte pas l'API BarcodeDetector, un lecteur alternatif basé sur ZXing est utilisé.
 - Calcul automatique des besoins quotidiens en calories et macronutriments à partir de l'âge, du poids, de la taille et du sexe avec ajustement selon la fréquence d'activité.
+- Les macronutriments sont répartis sur 25% de protéines, 25% de lipides et 50% de glucides.
 - Suivi du nombre de pas avec objectif personnalisable et calcul automatique des calories brûlées.
 - Boutons rapides (+500 à +5000) pour mettre à jour les pas.
 - Calcul des calories restantes en tenant compte des pas.
@@ -28,6 +29,8 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Ajout de nouveaux aliments comme la patate douce et le kiwi jaune pour améliorer la reconnaissance hors ligne.
 - Historique enrichi avec graphiques du poids et du nombre de pas.
 - Historique d'exemple d'un an pour visualiser immédiatement les graphiques.
+- Historique vide par défaut et calendrier plus large avec cases réduites.
+- Un clic sur la progression des calories affiche un tableau détaillé des macronutriments.
 - Objectif d'hydratation personnalisable avec des boutons +1L, +500 ml, +250 ml et -250 ml.
 - Nouvelle section "Recette" accessible depuis la barre de navigation.
 - Les graphiques de l'historique permettent désormais de choisir la période (7 jours à un an) et les détails quotidiens sont affichés du plus récent au plus ancien.

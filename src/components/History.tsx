@@ -32,25 +32,7 @@ interface HistoryDay {
   meals: number;
 }
 
-  // Simuler un an de données pour pouvoir afficher des graphiques étendus
-  const sampleHistory: HistoryDay[] = Array.from({ length: 365 }).map((_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (364 - i));
-    return {
-      date: date.toISOString().split('T')[0],
-      calories: 2000 + (i % 2 === 0 ? 100 : -100),
-      protein: 140 + (i % 5),
-      carbs: 250 + (i % 10) * 2,
-      fat: 70 + (i % 4),
-      water: 1800 + (i % 7) * 100,
-      weight: parseFloat((user.weight + Math.sin(i / 12) * 0.5).toFixed(1)),
-      steps: 8000 + (i % 20) * 200,
-      targetCalories: user.dailyCalories,
-      meals: 3
-    };
-  });
-
-  const [historyData] = useState<HistoryDay[]>(sampleHistory);
+  const [historyData] = useState<HistoryDay[]>([]);
 
   const getCurrentPeriodData = () => {
     const days = currentView === 'monthly' ? 30 : currentView === 'weekly' ? 7 : 7;
@@ -217,7 +199,7 @@ interface HistoryDay {
             setShowDatePicker(false);
             setCalendarDate(new Date(year, month, d));
           }}
-          className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-sm flex items-center justify-center rounded ${color} hover:brightness-110`}
+          className={`w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-sm flex items-center justify-center rounded ${color} hover:brightness-110`}
         >
           {d}
         </button>
@@ -225,7 +207,7 @@ interface HistoryDay {
     }
 
     return (
-      <div className="absolute z-10 mt-1 right-0 bg-gray-800 text-white p-2 rounded shadow-lg w-72 sm:w-80 md:w-[24rem]">
+      <div className="absolute z-10 mt-1 right-0 bg-gray-800 text-white p-2 rounded shadow-lg w-80 sm:w-96 md:w-[28rem]">
         <div className="flex items-center justify-between mb-2 text-sm">
           <button
             onClick={() => setCalendarDate(new Date(year, month - 1, 1))}
