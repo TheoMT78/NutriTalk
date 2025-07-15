@@ -163,7 +163,7 @@ function App() {
       case 'profile':
         return <Profile user={user} onUpdateUser={setUser} onLogout={() => setLoggedIn(false)} />;
       case 'history':
-        return <History user={user} />;
+        return <History user={user} weightHistory={weightHistory} />;
       default:
         return (
           <Dashboard

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Calendar, TrendingUp, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { User } from '../types';
+import WeightChart from './WeightChart';
+import StepHistoryChart from './StepHistoryChart';
 
 interface HistoryProps {
   user: User;
+  weightHistory: { date: string; weight: number }[];
 }
 
-const History: React.FC<HistoryProps> = ({ user }) => {
+const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
   const [currentView, setCurrentView] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -19,14 +22,15 @@ const History: React.FC<HistoryProps> = ({ user }) => {
     fat: number;
     water: number;
     weight: number;
+    steps: number;
     meals: number;
   }
 
   const [historyData] = useState<HistoryDay[]>([]);
 
   const getCurrentPeriodData = () => {
-    const data = historyData.slice(-7);
-    return data;
+    const days = currentView === 'monthly' ? 30 : currentView === 'weekly' ? 7 : 7;
+    return historyData.slice(-days);
   };
 
   const formatDate = (dateString: string) => {
@@ -79,6 +83,15 @@ const History: React.FC<HistoryProps> = ({ user }) => {
     : 0;
   const avgFat = currentData.length
     ? Math.round(currentData.reduce((sum, day) => sum + day.fat, 0) / currentData.length)
+    : 0;
+  const avgWater = currentData.length
+    ? Math.round(currentData.reduce((sum, day) => sum + day.water, 0) / currentData.length)
+    : 0;
+  const avgSteps = currentData.length
+    ? Math.round(currentData.reduce((sum, day) => sum + day.steps, 0) / currentData.length)
+    : 0;
+  const avgWeight = currentData.length
+    ? Math.round(currentData.reduce((sum, day) => sum + day.weight, 0) / currentData.length)
     : 0;
 
   return (
@@ -234,6 +247,51 @@ const History: React.FC<HistoryProps> = ({ user }) => {
             );
           })}
         </div>
+        )}
+      </div>
+
+      {/* Graphique des pas */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg font-semibold mb-6">Évolution des pas</h3>
+        {historyData.length === 0 ? (
+          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
+        ) : (
+          <StepHistoryChart data={historyData.slice(-7).map(d => ({ date: d.date, steps: d.steps }))} />
+        )}
+        {historyData.length > 0 && (
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Moyenne {avgSteps} pas/jour
+          </p>
+        )}
+      </div>
+
+      {/* Graphique du poids */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg font-semibold mb-6">Évolution du poids</h3>
+        {weightHistory.length === 0 ? (
+          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
+        ) : (
+          <WeightChart data={weightHistory.slice(-7)} />
+        )}
+        {weightHistory.length > 0 && (
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Poids moyen {avgWeight} kg
+          </p>
+        )}
+      </div>
+
+      {/* Graphique de l'eau */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg font-semibold mb-6">Hydratation</h3>
+        {historyData.length === 0 ? (
+          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
+        ) : (
+          <StepHistoryChart data={historyData.slice(-7).map(d => ({ date: d.date, steps: d.water }))} />
+        )}
+        {historyData.length > 0 && (
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Moyenne {avgWater} ml/jour
+          </p>
         )}
       </div>
 

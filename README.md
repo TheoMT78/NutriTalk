@@ -23,5 +23,6 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Suivi du poids sur 7 jours grâce à un graphique intégré au tableau de bord.
 - Le suivi des pas affiche le pourcentage exact même au-delà de 100%.
 - Base d'aliments enrichie avec plus de céréales crues et de fruits.
+- Historique enrichi avec graphiques du poids, de l'eau et du nombre de pas.
 
 Ces fonctionnalités reposent sur l'API publique OpenFoodFacts.
