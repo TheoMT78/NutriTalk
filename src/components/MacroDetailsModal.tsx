@@ -16,6 +16,19 @@ const MacroDetailsModal: React.FC<Props> = ({ user, log, onClose }) => {
     { key: 'Protéines', total: log.totalProtein, goal: user.dailyProtein, color: 'bg-green-500' },
     { key: 'Glucides', total: log.totalCarbs, goal: carbGoal, color: 'bg-orange-500' },
     { key: 'Lipides', total: log.totalFat, goal: user.dailyFat, color: 'bg-purple-500' },
+    { key: 'Fibres', total: 0, goal: 30, color: 'bg-gray-500' },
+    { key: 'Sucre', total: 0, goal: 50, color: 'bg-gray-500' },
+    { key: 'Acides gras saturés', total: 0, goal: 20, color: 'bg-gray-500' },
+    { key: 'Acides gras polyinsaturés', total: 0, goal: 11, color: 'bg-gray-500' },
+    { key: 'Acides gras monoinsaturés', total: 0, goal: 22, color: 'bg-gray-500' },
+    { key: 'Acides gras trans', total: 0, goal: 2, color: 'bg-gray-500' },
+    { key: 'Cholestérol', total: 0, goal: 300, color: 'bg-gray-500' },
+    { key: 'Sodium', total: 0, goal: 2300, color: 'bg-gray-500' },
+    { key: 'Potassium', total: 0, goal: 3500, color: 'bg-gray-500' },
+    { key: 'Vitamine A', total: 0, goal: 700, color: 'bg-gray-500' },
+    { key: 'Vitamine C', total: 0, goal: 80, color: 'bg-gray-500' },
+    { key: 'Calcium', total: 0, goal: 1000, color: 'bg-gray-500' },
+    { key: 'Fer', total: 0, goal: 18, color: 'bg-gray-500' },
   ];
 
   return (

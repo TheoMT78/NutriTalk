@@ -1,7 +1,6 @@
 import React from 'react';
 import { Target, TrendingUp, Droplets, Trash2, Edit3, Coffee, Utensils, Moon as Dinner, Apple } from 'lucide-react';
 import { User, DailyLog } from '../types';
-import MacroChart from './MacroChart';
 import MacroDetailsModal from './MacroDetailsModal';
 import StepProgress, { CALORIES_PER_STEP } from './StepProgress';
 import CalorieProgress from './CalorieProgress';
@@ -107,6 +106,12 @@ const Dashboard: React.FC<DashboardProps> = ({
                 {dailyLog.totalProtein.toFixed(0)}g
               </p>
               <p className="text-sm text-gray-500">/ {user.dailyProtein}g</p>
+              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-green-500 h-2 rounded-full"
+                  style={{ width: `${Math.min((dailyLog.totalProtein / user.dailyProtein) * 100, 100)}%` }}
+                />
+              </div>
             </div>
             <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
               <TrendingUp className="text-green-600 dark:text-green-400" size={20} />
@@ -127,6 +132,12 @@ const Dashboard: React.FC<DashboardProps> = ({
               {extraCarbs > 0 && (
                 <p className="text-xs text-gray-500">+{extraCarbs.toFixed(0)}g après activité</p>
               )}
+              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-orange-500 h-2 rounded-full"
+                  style={{ width: `${Math.min((dailyLog.totalCarbs / totalCarbGoal) * 100, 100)}%` }}
+                />
+              </div>
             </div>
             <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center">
               <Apple className="text-orange-600 dark:text-orange-400" size={20} />
@@ -142,6 +153,12 @@ const Dashboard: React.FC<DashboardProps> = ({
                 {dailyLog.totalFat.toFixed(0)}g
               </p>
               <p className="text-sm text-gray-500">/ {user.dailyFat}g</p>
+              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-purple-500 h-2 rounded-full"
+                  style={{ width: `${Math.min((dailyLog.totalFat / user.dailyFat) * 100, 100)}%` }}
+                />
+              </div>
             </div>
             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
               <Droplets className="text-purple-600 dark:text-purple-400" size={20} />
@@ -160,12 +177,6 @@ const Dashboard: React.FC<DashboardProps> = ({
             className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
           />
         </div>
-        <MacroChart
-          protein={dailyLog.totalProtein}
-          carbs={dailyLog.totalCarbs}
-          fat={dailyLog.totalFat}
-          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
-        />
         <StepProgress
           current={dailyLog.steps}
           target={user.stepGoal}
