@@ -41,6 +41,7 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
     { id: '3b', name: 'Patate douce', calories: 86, protein: 1.6, carbs: 20, fat: 0.1, category: 'Féculents', unit: '100g' },
     { id: '4', name: 'Quinoa cuit', calories: 120, protein: 4.4, carbs: 22, fat: 1.9, category: 'Féculents', unit: '100g' },
     { id: '5', name: 'Pain complet', calories: 247, protein: 13, carbs: 41, fat: 4.2, category: 'Féculents', unit: '100g' },
+    { id: '29', name: 'Pois chiches cuits', calories: 164, protein: 8.9, carbs: 27, fat: 2.6, category: 'Légumineuses', unit: '100g' },
     
     // Protéines
     { id: '6', name: 'Blanc de poulet', calories: 165, protein: 31, carbs: 0, fat: 3.6, category: 'Protéines', unit: '100g' },
@@ -62,6 +63,7 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
     { id: '18', name: 'Orange', calories: 47, protein: 0.9, carbs: 12, fat: 0.1, fiber: 2.4, vitaminC: 89, category: 'Fruits', unit: '100g' },
     { id: '19', name: 'Avocat', calories: 160, protein: 2, carbs: 9, fat: 15, category: 'Fruits', unit: '100g' },
     { id: '20', name: 'Fraises', calories: 32, protein: 0.7, carbs: 8, fat: 0.3, fiber: 2, vitaminC: 59, category: 'Fruits', unit: '100g' },
+    { id: '20b', name: 'Kiwi jaune', calories: 60, protein: 1.1, carbs: 15, fat: 0.5, fiber: 2, vitaminC: 140, category: 'Fruits', unit: '100g' },
     
     // Produits laitiers
     { id: '21', name: 'Yaourt nature 0%', calories: 56, protein: 10, carbs: 4, fat: 0.1, category: 'Produits laitiers', unit: '100g' },
@@ -74,6 +76,9 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
     { id: '26', name: 'Noix', calories: 654, protein: 15, carbs: 14, fat: 65, category: 'Fruits secs', unit: '100g' },
     { id: '27', name: 'Huile d\'olive', calories: 884, protein: 0, carbs: 0, fat: 100, category: 'Matières grasses', unit: '100ml' },
     { id: '28', name: 'Chocolat noir 70%', calories: 546, protein: 8, carbs: 46, fat: 31, category: 'Snacks', unit: '100g' },
+    { id: '30', name: 'Pignons de pin', calories: 673, protein: 14, carbs: 13, fat: 68, category: 'Fruits secs', unit: '100g' },
+    { id: '31', name: 'Pois cassés', calories: 118, protein: 8, carbs: 21, fat: 0.4, category: 'Légumineuses', unit: '100g' },
+    { id: '32', name: 'Chou kale', calories: 49, protein: 4.3, carbs: 9, fat: 0.9, category: 'Légumes', unit: '100g' },
   ]);
 
   const allFoods = [...foods, ...customFoods, ...externalFoods];
@@ -191,23 +196,16 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
   };
 
   const handleScanResult = (p: OFFProduct) => {
-    const item: FoodItem = {
-      id: p.code,
+    setNewFood({
       name: p.product_name || 'Produit',
-      calories: p.nutriments?.['energy-kcal_100g'] || 0,
-      protein: p.nutriments?.proteins_100g || 0,
-      carbs: p.nutriments?.carbohydrates_100g || 0,
-      fat: p.nutriments?.fat_100g || 0,
-      fiber: p.nutriments?.fiber_100g || 0,
-      vitaminA: p.nutriments?.['vitamin-a_100g'] || 0,
-      vitaminC: p.nutriments?.['vitamin-c_100g'] || 0,
-      calcium: p.nutriments?.['calcium_100g'] || 0,
-      iron: p.nutriments?.['iron_100g'] || 0,
+      calories: (p.nutriments?.['energy-kcal_100g'] || 0).toString(),
+      protein: (p.nutriments?.proteins_100g || 0).toString(),
+      carbs: (p.nutriments?.carbohydrates_100g || 0).toString(),
+      fat: (p.nutriments?.fat_100g || 0).toString(),
       category: 'Importé',
       unit: '100g',
-      isCustom: true,
-    };
-    setCustomFoods(prev => [...prev, item]);
+    });
+    setShowAddForm(true);
   };
 
   return (

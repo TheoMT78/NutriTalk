@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Mic, MicOff, Bot, User, Loader } from 'lucide-react';
 import { searchProductFallback } from '../utils/openFoodFacts';
+import { findClosestFood } from '../utils/findClosestFood';
 import { Recipe } from '../types';
 
 interface AIChatProps {
@@ -148,6 +149,29 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, onAddRecipe, isDark
       });
       }
     });
+    if (suggestions.length === 0) {
+      const closest = findClosestFood(description, foodDatabase.map(f => f.food));
+      if (closest) {
+        suggestions.push({
+          name: closest.name,
+          quantity: 100,
+          unit: closest.unit,
+          calories: closest.calories,
+          protein: closest.protein,
+          carbs: closest.carbs,
+          fat: closest.fat,
+          fiber: closest.fiber,
+          vitaminA: closest.vitaminA,
+          vitaminC: closest.vitaminC,
+          calcium: closest.calcium,
+          iron: closest.iron,
+          category: closest.category,
+          meal,
+          confidence: 0.5,
+        });
+      }
+    }
+
     if (suggestions.length === 0) {
       const external = await searchProductFallback(description);
       external.slice(0, 3).forEach(p => {

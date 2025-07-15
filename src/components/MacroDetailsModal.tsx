@@ -59,7 +59,7 @@ const MacroDetailsModal: React.FC<Props> = ({ user, log, onClose }) => {
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30"
       onClick={handleOverlayClick}
     >
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto custom-scrollbar">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Détails nutritionnels</h3>
           <button onClick={onClose} className="p-1 text-gray-500 hover:text-red-500">
