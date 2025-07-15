@@ -82,6 +82,7 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
       { keywords: ['tomate', 'tomato'], food: { name: 'Tomates', calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2, category: 'Légumes', unit: '100g' }},
       { keywords: ['salade', 'salad'], food: { name: 'Salade verte', calories: 15, protein: 1.4, carbs: 2.9, fat: 0.2, category: 'Légumes', unit: '100g' }},
       { keywords: ['banane', 'banana'], food: { name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, category: 'Fruits', unit: '100g' }},
+      { keywords: ['kiwi jaune', 'kiwi gold', 'kiwi', 'sungold'], food: { name: 'Kiwi jaune', calories: 60, protein: 1.1, carbs: 15, fat: 0.5, category: 'Fruits', unit: '100g' }},
       { keywords: ['pomme', 'apple'], food: { name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, category: 'Fruits', unit: '100g' }},
       { keywords: ['yaourt', 'yogurt'], food: { name: 'Yaourt nature 0%', calories: 56, protein: 10, carbs: 4, fat: 0.1, category: 'Produits laitiers', unit: '100g' }},
       { keywords: ['fromage', 'cheese'], food: { name: 'Fromage', calories: 280, protein: 22, carbs: 2.2, fat: 22, category: 'Produits laitiers', unit: '100g' }},

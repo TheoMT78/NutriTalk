@@ -138,5 +138,8 @@ export const foodDatabase: FoodItem[] = [
   { id: '115', name: 'Pois cassés secs', calories: 320, protein: 23, carbs: 53, fat: 1.4, category: 'Légumineuses', unit: '100g' },
   { id: '116', name: 'Courge butternut', calories: 45, protein: 1, carbs: 12, fat: 0.1, category: 'Légumes', unit: '100g' },
   { id: '117', name: 'Chou kale', calories: 49, protein: 4.3, carbs: 9, fat: 0.9, category: 'Légumes', unit: '100g' },
-  { id: '118', name: 'Grenade', calories: 83, protein: 1.7, carbs: 19, fat: 1.2, category: 'Fruits', unit: '100g' }
+  { id: '118', name: 'Grenade', calories: 83, protein: 1.7, carbs: 19, fat: 1.2, category: 'Fruits', unit: '100g' },
+  { id: '119', name: 'Patate douce cuite', calories: 90, protein: 1.6, carbs: 20, fat: 0.1, category: 'Féculents', unit: '100g' },
+  { id: '120', name: 'Patate douce crue', calories: 86, protein: 1.6, carbs: 20, fat: 0.1, category: 'Féculents', unit: '100g' },
+  { id: '121', name: 'Kiwi jaune', calories: 60, protein: 1.1, carbs: 15, fat: 0.5, category: 'Fruits', unit: '100g' }
 ];
