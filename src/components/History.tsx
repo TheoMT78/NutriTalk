@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, TrendingUp, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { User } from '../types';
 import WeightChart from './WeightChart';
 import StepHistoryChart from './StepHistoryChart';
@@ -58,34 +58,6 @@ interface HistoryDay {
   };
 
 
-  const exportHistory = () => {
-    const csvContent = [
-      ['Date', 'Calories', 'Protéines', 'Glucides', 'Lipides', 'Eau', 'Poids', 'Repas'],
-      ...historyData.map(day => [
-        day.date,
-        day.calories,
-        day.protein,
-        day.carbs,
-        day.fat,
-        day.water,
-        day.weight,
-        day.meals
-      ])
-    ].map(row => row.join(',')).join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `nutritalk-historique-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const generatePDF = () => {
-    // Simulation de génération PDF
-    alert('Génération du rapport PDF... Cette fonctionnalité sera disponible prochainement.');
-  };
 
   const currentData = getCurrentPeriodData();
   const avgCalories = currentData.length
@@ -288,22 +260,6 @@ interface HistoryDay {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Historique nutritionnel</h2>
-        <div className="flex space-x-2">
-          <button
-            onClick={exportHistory}
-            className="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
-          >
-            <Download size={20} />
-            <span>CSV</span>
-          </button>
-          <button
-            onClick={generatePDF}
-            className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
-          >
-            <Download size={20} />
-            <span>PDF</span>
-          </button>
-        </div>
       </div>
 
       {/* Filtres de vue */}

@@ -38,3 +38,14 @@ export async function searchProduct(query: string): Promise<OFFProduct[]> {
     return [];
   }
 }
+
+export async function searchProductFallback(query: string): Promise<OFFProduct[]> {
+  let results = await searchProduct(query);
+  if (results.length > 0) return results;
+  const terms = query.split(/\s+/).filter(Boolean);
+  for (const term of terms) {
+    results = await searchProduct(term);
+    if (results.length > 0) return results;
+  }
+  return [];
+}

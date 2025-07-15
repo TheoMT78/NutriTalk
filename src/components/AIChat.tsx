@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Mic, MicOff, Bot, User, Loader } from 'lucide-react';
-import { searchProduct } from '../utils/openFoodFacts';
+import { searchProductFallback } from '../utils/openFoodFacts';
 
 interface AIChatProps {
   onClose: () => void;
@@ -130,7 +130,7 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
       }
     });
     if (suggestions.length === 0) {
-      const external = await searchProduct(description);
+      const external = await searchProductFallback(description);
       external.slice(0, 3).forEach(p => {
         suggestions.push({
           name: p.product_name || 'Produit',

@@ -3,7 +3,7 @@ import { Search, Plus, Star, X } from 'lucide-react';
 import { FoodItem } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import QRScanner from './QRScanner';
-import { OFFProduct, searchProduct } from '../utils/openFoodFacts';
+import { OFFProduct, searchProductFallback } from '../utils/openFoodFacts';
 
 interface FoodSearchProps {
   onAddFood: (food: {
@@ -92,7 +92,7 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
         return;
       }
       if (filteredFoods.length > 0) return;
-      const results = await searchProduct(searchTerm);
+      const results = await searchProductFallback(searchTerm);
       const mapped: FoodItem[] = results.slice(0, 5).map(p => ({
         id: p.code,
         name: p.product_name || 'Produit',

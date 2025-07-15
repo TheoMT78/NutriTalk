@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { computeDailyTargets, calculateMacroTargets } from '../utils/nutrition';
-import { User as UserIcon, Settings, Target, Activity, Palette, Download, Upload } from 'lucide-react';
+import { User as UserIcon, Settings, Target, Activity, Palette } from 'lucide-react';
 import NumberStepper from './NumberStepper';
 import { User as UserType } from '../types';
 
@@ -118,66 +118,12 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
       goal: formData.goal,
     }).calories;
   };
-
-  const exportData = () => {
-    const data = {
-      profile: user,
-      exportDate: new Date().toISOString(),
-      version: '1.0'
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `nutritalk-profile-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const importData = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target?.result as string);
-        if (data.profile) {
-          onUpdateUser(data.profile);
-          setFormData(data.profile);
-          alert('Profil importé avec succès !');
-        }
-      } catch {
-        alert('Erreur lors de l\'importation du fichier');
-      }
-    };
-    reader.readAsText(file);
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Mon Profil</h2>
         <div className="flex space-x-2">
-          <button
-            onClick={exportData}
-            className="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
-          >
-            <Download size={20} />
-            <span>Exporter</span>
-          </button>
-          <label className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer">
-            <Upload size={20} />
-            <span>Importer</span>
-            <input
-              type="file"
-              accept=".json"
-              onChange={importData}
-              className="hidden"
-            />
-          </label>
           {onLogout && (
             <button
               onClick={onLogout}

@@ -5,6 +5,7 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 ## Nouveautés
 
 - Recherche d'aliments en ligne via OpenFoodFacts lorsque la base interne ne suffit pas.
+- Si aucun résultat n'est trouvé, chaque mot de votre requête est recherché séparément pour améliorer la détection d'aliments.
 - Possibilité de scanner un code-barres pour importer automatiquement un aliment.
   Si le navigateur ne supporte pas l'API BarcodeDetector, un lecteur alternatif basé sur ZXing est utilisé.
 - Calcul automatique des besoins quotidiens en calories et macronutriments à partir de l'âge, du poids, de la taille et du sexe avec ajustement selon la fréquence d'activité.
