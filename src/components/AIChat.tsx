@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Mic, MicOff, Bot, User, Loader } from 'lucide-react';
+import { searchProduct } from '../utils/openFoodFacts';
 
 interface AIChatProps {
   onClose: () => void;
@@ -56,7 +57,7 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const analyzeFood = (description: string): FoodSuggestion[] => {
+  const analyzeFood = async (description: string): Promise<FoodSuggestion[]> => {
     const suggestions: FoodSuggestion[] = [];
     const lowerDescription = description.toLowerCase();
     
@@ -124,10 +125,27 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
           fat: food.fat * multiplier,
           category: food.category,
           meal,
-          confidence: 0.8 + Math.random() * 0.2
-        });
+        confidence: 0.8 + Math.random() * 0.2
+      });
       }
     });
+    if (suggestions.length === 0) {
+      const external = await searchProduct(description);
+      external.slice(0, 3).forEach(p => {
+        suggestions.push({
+          name: p.product_name || 'Produit',
+          quantity: 100,
+          unit: p.serving_size?.includes('ml') ? 'ml' : 'g',
+          calories: p.nutriments?.['energy-kcal_100g'] || 0,
+          protein: p.nutriments?.proteins_100g || 0,
+          carbs: p.nutriments?.carbohydrates_100g || 0,
+          fat: p.nutriments?.fat_100g || 0,
+          category: 'Importé',
+          meal,
+          confidence: 0.6
+        });
+      });
+    }
 
     return suggestions;
   };
@@ -149,7 +167,7 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
     // Simulated AI processing
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const suggestions = analyzeFood(input);
+    const suggestions = await analyzeFood(input);
     
     let aiResponse = '';
     if (suggestions.length > 0) {
@@ -157,11 +175,12 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
       
       suggestions.forEach((suggestion, index) => {
         const totalCalories = suggestion.calories.toFixed(0);
-        aiResponse += `\n\n${index + 1}. **${suggestion.name}** (${suggestion.quantity}${suggestion.unit})
-- ${totalCalories} kcal
-- Protéines: ${suggestion.protein.toFixed(1)}g
-- Glucides: ${suggestion.carbs.toFixed(1)}g  
-- Lipides: ${suggestion.fat.toFixed(1)}g`;
+        const displayUnit = suggestion.unit.replace(/^100/, '');
+        aiResponse += `\n\n${index + 1}. **${suggestion.name}** (${suggestion.quantity}${displayUnit})
+        - ${totalCalories} kcal
+        - Protéines: ${suggestion.protein.toFixed(1)}g
+        - Glucides: ${suggestion.carbs.toFixed(1)}g
+        - Lipides: ${suggestion.fat.toFixed(1)}g`;
       });
       
       aiResponse += '\n\nVoulez-vous ajouter ces aliments à votre journal ? Vous pouvez cliquer sur "Ajouter" pour chaque aliment ou modifier les quantités si nécessaire.';
@@ -309,7 +328,8 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
                           <div className="flex-1">
                             <div className="font-medium">{suggestion.name}</div>
                             <div className="text-sm opacity-70">
-                              {suggestion.quantity}{suggestion.unit} • {suggestion.calories.toFixed(0)} kcal
+                              {suggestion.quantity}
+                              {suggestion.unit.replace(/^100/, '')} • {suggestion.calories.toFixed(0)} kcal
                             </div>
                           </div>
                           <button
