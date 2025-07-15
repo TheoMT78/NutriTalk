@@ -11,6 +11,7 @@ import Login from './components/Login';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { User, FoodEntry, DailyLog } from './types';
 import { computeDailyTargets } from './utils/nutrition';
+import { loadLocalFoodBase } from './utils/openFoodFacts';
 
 function App() {
   const defaultUser = {
@@ -75,6 +76,11 @@ function App() {
       document.documentElement.classList.toggle('dark', prefersDark);
     }
   }, [user.theme]);
+
+  useEffect(() => {
+    const foods = loadLocalFoodBase();
+    console.log('First local foods', foods.slice(0, 5));
+  }, []);
 
   if (!loggedIn) {
     return (

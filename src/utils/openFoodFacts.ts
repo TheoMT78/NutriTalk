@@ -15,6 +15,12 @@ export interface OFFProduct {
   serving_size?: string;
 }
 
+import aliments from '../data/aliments.json';
+
+export function loadLocalFoodBase(): OFFProduct[] {
+  return aliments as OFFProduct[];
+}
+
 export async function fetchProductByBarcode(barcode: string): Promise<OFFProduct | null> {
   try {
     const url = `https://world.openfoodfacts.org/api/v2/product/${barcode}?fields=product_name,nutriments,code,serving_size`;
