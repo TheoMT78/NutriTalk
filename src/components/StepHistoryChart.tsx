@@ -9,9 +9,10 @@ interface StepHistoryChartProps {
   data: StepPoint[];
   className?: string;
   ticks?: { index: number; label: string }[];
+  mode: 'steps' | 'water';
 }
 
-const StepHistoryChart: React.FC<StepHistoryChartProps> = ({ data, className = '', ticks }) => {
+const StepHistoryChart: React.FC<StepHistoryChartProps> = ({ data, className = '', ticks, mode }) => {
   if (data.length === 0) {
     return (
       <div className={className}>
@@ -28,7 +29,24 @@ const StepHistoryChart: React.FC<StepHistoryChartProps> = ({ data, className = '
   const barWidth = innerWidth / data.length;
   const avg = data.reduce((sum, d) => sum + d.value, 0) / data.length;
 
-  const yTicks = [0, maxVal / 2, maxVal];
+  const computeStepTicks = (max: number) => {
+    if (max <= 10000) return [0, 2000, 4000, 6000, 8000, 10000];
+    if (max <= 15000) return [0, 5000, 10000, 15000];
+    if (max <= 20000) return [0, 10000, 20000];
+    if (max <= 30000) return [0, 10000, 20000, 30000];
+    return [0, 10000, 20000, 30000, 40000];
+  };
+
+  const computeWaterTicks = (max: number) => {
+    if (max <= 4000) return [0, 1000, 2000, 3000, 4000];
+    const top = Math.max(6000, Math.ceil(max / 2000) * 2000);
+    const arr = [] as number[];
+    for (let v = 0; v <= top; v += 2000) arr.push(v);
+    return arr;
+  };
+
+  const yTicks = mode === 'steps' ? computeStepTicks(maxVal) : computeWaterTicks(maxVal);
+  const maxTick = yTicks[yTicks.length - 1] || maxVal;
 
   return (
     <div className={className}>
@@ -45,15 +63,15 @@ const StepHistoryChart: React.FC<StepHistoryChartProps> = ({ data, className = '
           <g key={i}>
             <line
               x1={marginLeft}
-              y1={height - (val / maxVal) * height}
+              y1={height - (val / maxTick) * height}
               x2={width}
-              y2={height - (val / maxVal) * height}
+              y2={height - (val / maxTick) * height}
               className="stroke-gray-200 dark:stroke-gray-700"
               strokeWidth={0.5}
             />
             <text
               x={marginLeft - 2}
-              y={height - (val / maxVal) * height}
+              y={height - (val / maxTick) * height}
               textAnchor="end"
               dominantBaseline="central"
               className="text-[10px] fill-current"
@@ -64,7 +82,7 @@ const StepHistoryChart: React.FC<StepHistoryChartProps> = ({ data, className = '
         ))}
 
         {data.map((d, i) => {
-          const barHeight = (d.value / maxVal) * height;
+          const barHeight = (d.value / maxTick) * height;
           const x = marginLeft + i * barWidth + barWidth * 0.1;
           const y = height - barHeight;
           return (

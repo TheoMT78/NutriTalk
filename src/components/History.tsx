@@ -15,6 +15,8 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
   const [stepsPeriod, setStepsPeriod] = useState<'week' | 'month' | 'sixMonths' | 'year'>('week');
   const [weightPeriod, setWeightPeriod] = useState<'week' | 'month' | 'threeMonths' | 'sixMonths'>('week');
   const [waterPeriod, setWaterPeriod] = useState<'week' | 'month' | 'sixMonths' | 'year'>('week');
+  const [filterDate, setFilterDate] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   // Historique vide au premier lancement
   interface HistoryDay {
@@ -101,7 +103,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
     switch (stepsPeriod) {
       case 'week':
         return historyData.slice(-7).map(d => ({
-          label: new Date(d.date).toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 1),
+          label: new Date(d.date).toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 3),
           value: d.steps,
         }));
       case 'month':
@@ -167,7 +169,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
     switch (waterPeriod) {
       case 'week':
         return historyData.slice(-7).map(d => ({
-          label: new Date(d.date).toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 1),
+          label: new Date(d.date).toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 3),
           value: d.water,
         }));
       case 'month':
@@ -379,45 +381,61 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <h3 className="text-lg font-semibold">Détails par jour</h3>
+          <div className="relative">
+            <button
+              onClick={() => setShowDatePicker(!showDatePicker)}
+              className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <Calendar size={18} />
+            </button>
+            {showDatePicker && (
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="absolute right-0 mt-1 text-sm bg-gray-100 dark:bg-gray-700 rounded"
+              />
+            )}
+          </div>
         </div>
 
         {historyData.length === 0 ? (
           <p className="p-6 text-sm text-gray-500">Aucune donnée pour le moment</p>
         ) : (
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full text-sm">
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Calories
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Protéines
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Glucides
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Lipides
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Eau
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Poids
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {historyData.slice(-10).reverse().map((day) => (
+              {(filterDate ? historyData.filter(d => d.date === filterDate) : historyData.slice(-10).reverse()).map((day) => (
                 <tr key={day.date} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-4 py-2 whitespace-nowrap font-medium">
                     {new Date(day.date).toLocaleDateString('fr-FR')}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     <span className={`font-medium ${
                       day.calories > user.dailyCalories ? 'text-red-500' : 'text-green-500'
                     }`}
@@ -426,19 +444,19 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
                     </span>
                     <span className="text-gray-500 ml-1">kcal</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {day.protein}g
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {day.carbs}g
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {day.fat}g
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {day.water}ml
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {day.weight}kg
                   </td>
                 </tr>
@@ -467,7 +485,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
         {historyData.length === 0 ? (
           <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
         ) : (
-          <StepHistoryChart data={getStepChartData()} ticks={getStepChartTicks()} />
+          <StepHistoryChart mode="steps" data={getStepChartData()} ticks={getStepChartTicks()} />
         )}
       </div>
 
@@ -513,7 +531,7 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
         {historyData.length === 0 ? (
           <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
         ) : (
-          <StepHistoryChart data={getWaterChartData()} ticks={getWaterChartTicks()} />
+          <StepHistoryChart mode="water" data={getWaterChartData()} ticks={getWaterChartTicks()} />
         )}
       </div>
 
