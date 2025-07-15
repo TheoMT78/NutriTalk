@@ -22,8 +22,8 @@ export function calculateTDEE({ weight, height, age, gender, activityLevel, goal
 
   const tdee = bmr * (activityMultipliers[activityLevel] || 1.2);
 
-  // Ajustement selon l'objectif (±5 % du TDEE)
-  const goalMultiplier = goal === 'perte' ? 0.95 : goal === 'prise' ? 1.05 : 1;
+  // Ajustement selon l'objectif (±10 % du TDEE)
+  const goalMultiplier = goal === 'perte' ? 0.9 : goal === 'prise' ? 1.1 : 1;
 
   return Math.round(tdee * goalMultiplier);
 }
