@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Mic, MicOff, Bot, User, Loader } from 'lucide-react';
 import { searchProductFallback } from '../utils/openFoodFacts';
+import { Recipe } from '../types';
 
 interface AIChatProps {
   onClose: () => void;
@@ -15,6 +16,7 @@ interface AIChatProps {
     category: string;
     meal: 'petit-déjeuner' | 'déjeuner' | 'dîner' | 'collation';
   }) => void;
+  onAddRecipe?: (recipe: Recipe) => void;
   isDarkMode: boolean;
 }
 
@@ -24,6 +26,7 @@ interface Message {
   content: string;
   timestamp: Date;
   suggestions?: FoodSuggestion[];
+  recipe?: Recipe;
 }
 
 interface FoodSuggestion {
@@ -39,7 +42,7 @@ interface FoodSuggestion {
   confidence: number;
 }
 
-const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
+const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, onAddRecipe, isDarkMode }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -151,6 +154,21 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
     return suggestions;
   };
 
+  const parseRecipe = (text: string): Recipe | null => {
+    const lower = text.toLowerCase();
+    if (!lower.includes('ingr')) return null;
+    const nameMatch = text.match(/recette de ([^:.]+)/i);
+    const name = nameMatch ? nameMatch[1].trim() : 'Recette';
+    const ingMatch = text.match(/ingr[ée]dients?:([^.]*)/i);
+    const ingredients = ingMatch ? ingMatch[1].split(/,| et /).map(s => s.trim()).filter(Boolean) : [];
+    const instrMatch = text.match(/instructions?:([^.]*)/i);
+    const instructions = instrMatch ? instrMatch[1].trim() : '';
+    const timeMatch = text.match(/(\d+\s*(?:min|minutes|h|heures))/i);
+    const fridgeMatch = text.match(/frigo[^\d]*(\d+\s*j)/i);
+    const freezerMatch = text.match(/cong\w*[^\d]*(\d+\s*j)/i);
+    return { id: Date.now().toString(), name, ingredients, instructions, prepTime: timeMatch?.[1], fridgeLife: fridgeMatch?.[1], freezerLife: freezerMatch?.[1] };
+  };
+
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
@@ -169,6 +187,7 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     const suggestions = await analyzeFood(input);
+    const recipe = parseRecipe(input);
     
     let aiResponse = '';
     if (suggestions.length > 0) {
@@ -194,7 +213,8 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
       type: 'ai',
       content: aiResponse,
       timestamp: new Date(),
-      suggestions: suggestions.length > 0 ? suggestions : undefined
+      suggestions: suggestions.length > 0 ? suggestions : undefined,
+      recipe: recipe || undefined
     };
 
     setMessages(prev => [...prev, aiMessage]);
@@ -342,6 +362,42 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+                {message.recipe && (
+                  <div className="mt-4 space-y-2 text-sm">
+                    <div className="font-semibold">{message.recipe.name}</div>
+                    {message.recipe.ingredients.length > 0 && (
+                      <div>
+                        <div className="font-medium">Ingrédients:</div>
+                        <ul className="list-disc list-inside">
+                          {message.recipe.ingredients.map((ing, i) => (
+                            <li key={i}>{ing}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {message.recipe.instructions && (
+                      <div>
+                        <div className="font-medium">Instructions:</div>
+                        <p>{message.recipe.instructions}</p>
+                      </div>
+                    )}
+                    {(message.recipe.prepTime || message.recipe.fridgeLife || message.recipe.freezerLife) && (
+                      <div className="space-y-1">
+                        {message.recipe.prepTime && <div>Préparation: {message.recipe.prepTime}</div>}
+                        {message.recipe.fridgeLife && <div>Conservation frigo: {message.recipe.fridgeLife}</div>}
+                        {message.recipe.freezerLife && <div>Conservation congélo: {message.recipe.freezerLife}</div>}
+                      </div>
+                    )}
+                    {onAddRecipe && (
+                      <button
+                        onClick={() => onAddRecipe(message.recipe!)}
+                        className="mt-2 bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                      >
+                        Ajouter à mes recettes
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

@@ -102,6 +102,12 @@ const Dashboard: React.FC<DashboardProps> = ({
                 {dailyLog.totalCalories.toFixed(0)}
               </p>
               <p className="text-sm text-gray-500">reste {caloriesRemaining.toFixed(0)} / {totalGoal.toFixed(0)}</p>
+              <div className="mt-1 w-2/3 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-blue-500 h-2 rounded-full"
+                  style={{ width: `${Math.min((dailyLog.totalCalories / totalGoal) * 100, 100)}%` }}
+                />
+              </div>
             </div>
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
               <Target className="text-blue-600 dark:text-blue-400" size={20} />
@@ -161,7 +167,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">Lipides</p>
               <p className="text-2xl font-bold text-purple-600">
-                {dailyLog.totalFat.toFixed(0)}g
+                {Math.max(0, dailyLog.totalFat).toFixed(0)}g
               </p>
               <p className="text-sm text-gray-500">/ {user.dailyFat}g</p>
               <div className="mt-1 w-2/3 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full h-2">

@@ -31,8 +31,23 @@ const MacroDetailsModal: React.FC<Props> = ({ user, log, onClose }) => {
     { key: 'Fer', total: 0, goal: 18, color: 'bg-gray-500' },
   ];
 
+  React.useEffect(() => {
+    const original = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, []);
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30"
+      onClick={handleOverlayClick}
+    >
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Détails nutritionnels</h3>

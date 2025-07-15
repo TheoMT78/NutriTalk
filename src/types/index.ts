@@ -58,3 +58,13 @@ export interface FoodItem {
   isFavorite?: boolean;
   isCustom?: boolean;
 }
+
+export interface Recipe {
+  id: string;
+  name: string;
+  ingredients: string[];
+  instructions: string;
+  prepTime?: string;
+  fridgeLife?: string;
+  freezerLife?: string;
+}
