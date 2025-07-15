@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { computeDailyTargets, calculateMacroTargets } from '../utils/nutrition';
 import { User as UserIcon, Settings, Target, Activity, Palette, Download, Upload } from 'lucide-react';
 import { User as UserType } from '../types';
@@ -12,6 +12,7 @@ interface ProfileProps {
 const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(user);
+  const autoTargetsRef = useRef(computeDailyTargets(user));
 
   const handleSave = () => {
     const auto = computeDailyTargets({
@@ -50,26 +51,50 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
     setIsEditing(false);
   };
 
+  useEffect(() => {
+    const newTargets = computeDailyTargets({
+      weight: formData.weight,
+      height: formData.height,
+      age: formData.age,
+      gender: formData.gender,
+      activityLevel: formData.activityLevel,
+      goal: formData.goal,
+    });
+
+    const prev = autoTargetsRef.current;
+    const usingAuto =
+      formData.dailyCalories === prev.calories &&
+      formData.dailyProtein === prev.protein &&
+      formData.dailyCarbs === prev.carbs &&
+      formData.dailyFat === prev.fat;
+
+    autoTargetsRef.current = newTargets;
+
+    if (usingAuto) {
+      setFormData((f) => ({
+        ...f,
+        dailyCalories: newTargets.calories,
+        dailyProtein: newTargets.protein,
+        dailyCarbs: newTargets.carbs,
+        dailyFat: newTargets.fat,
+      }));
+    }
+  }, [formData.weight, formData.height, formData.age, formData.gender, formData.activityLevel, formData.goal, formData.dailyCalories, formData.dailyProtein, formData.dailyCarbs, formData.dailyFat]);
+
   const calculateBMI = () => {
     const heightInMeters = formData.height / 100;
     return (formData.weight / (heightInMeters * heightInMeters)).toFixed(1);
   };
 
-  const calculateBMR = () => {
-    // Formule de Mifflin-St Jeor
-    const bmr = formData.gender === 'homme' 
-      ? 10 * formData.weight + 6.25 * formData.height - 5 * formData.age + 5
-      : 10 * formData.weight + 6.25 * formData.height - 5 * formData.age - 161;
-    
-    const activityMultipliers = {
-      'sédentaire': 1.2,
-      'légère': 1.375,
-      'modérée': 1.55,
-      'élevée': 1.725,
-      'très élevée': 1.9
-    } as const;
-
-    return Math.round(bmr * (activityMultipliers[formData.activityLevel as keyof typeof activityMultipliers] || 1.2));
+  const calculateNeeds = () => {
+    return computeDailyTargets({
+      weight: formData.weight,
+      height: formData.height,
+      age: formData.age,
+      gender: formData.gender,
+      activityLevel: formData.activityLevel,
+      goal: formData.goal,
+    }).calories;
   };
 
   const exportData = () => {
@@ -333,8 +358,8 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
           </div>
 
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{calculateBMR()}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Métabolisme de base</div>
+            <div className="text-2xl font-bold text-green-600">{calculateNeeds()}</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Besoins quotidiens</div>
             <div className="text-xs text-gray-500 mt-1">kcal/jour</div>
           </div>
 
