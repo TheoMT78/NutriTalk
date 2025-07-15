@@ -34,8 +34,11 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
   const [foods] = useState<FoodItem[]>([
     // Féculents
     { id: '1', name: 'Riz blanc cuit', calories: 130, protein: 2.7, carbs: 28, fat: 0.3, category: 'Féculents', unit: '100g' },
+    { id: '1b', name: 'Riz blanc cru', calories: 360, protein: 7, carbs: 80, fat: 0.6, category: 'Féculents', unit: '100g' },
     { id: '2', name: 'Pâtes cuites', calories: 131, protein: 5, carbs: 25, fat: 1.1, category: 'Féculents', unit: '100g' },
+    { id: '2b', name: 'Pâtes crues', calories: 371, protein: 13, carbs: 75, fat: 1.5, category: 'Féculents', unit: '100g' },
     { id: '3', name: 'Pommes de terre', calories: 77, protein: 2, carbs: 17, fat: 0.1, category: 'Féculents', unit: '100g' },
+    { id: '3b', name: 'Patate douce', calories: 86, protein: 1.6, carbs: 20, fat: 0.1, category: 'Féculents', unit: '100g' },
     { id: '4', name: 'Quinoa cuit', calories: 120, protein: 4.4, carbs: 22, fat: 1.9, category: 'Féculents', unit: '100g' },
     { id: '5', name: 'Pain complet', calories: 247, protein: 13, carbs: 41, fat: 4.2, category: 'Féculents', unit: '100g' },
     

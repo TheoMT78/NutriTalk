@@ -245,7 +245,7 @@ interface HistoryDay {
             setShowDatePicker(false);
             setCalendarDate(new Date(year, month, d));
           }}
-          className={`w-12 h-12 text-base flex items-center justify-center rounded ${color} hover:brightness-110`}
+          className={`w-16 h-16 text-base flex items-center justify-center rounded ${color} hover:brightness-110`}
         >
           {d}
         </button>
@@ -271,14 +271,14 @@ interface HistoryDay {
             {">"}
           </button>
         </div>
-        <div className="grid grid-cols-7 gap-1 text-center text-xs mb-1">
+        <div className="grid grid-cols-7 gap-2 text-center text-xs mb-1">
           {['lu', 'ma', 'me', 'je', 've', 'sa', 'di'].map(d => (
             <div key={d} className="text-gray-400">
               {d}
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-1">{daySquares}</div>
+        <div className="grid grid-cols-7 gap-2">{daySquares}</div>
       </div>
     );
   };

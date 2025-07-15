@@ -28,7 +28,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
 
     const updated = { ...formData } as UserType;
 
-    if (!locks.calories) {
+    if (!locks.calories && formData.dailyCalories === user.dailyCalories) {
       updated.dailyCalories = auto.calories;
     }
 

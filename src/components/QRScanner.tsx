@@ -42,6 +42,8 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
                 if (product) {
                   onResult(product);
                   onClose();
+                } else {
+                  setError('Produit introuvable');
                 }
               }
             } catch {
@@ -59,6 +61,8 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
               if (product) {
                 onResult(product);
                 onClose();
+              } else {
+                setError('Produit introuvable');
               }
             }
           });
