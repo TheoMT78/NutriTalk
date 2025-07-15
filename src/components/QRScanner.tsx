@@ -26,6 +26,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          videoRef.current.setAttribute('playsinline', 'true');
           await videoRef.current.play();
         }
 
@@ -83,7 +84,12 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
           <button onClick={onClose} className="text-sm text-gray-500">Fermer</button>
         </div>
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <video ref={videoRef} className="w-full rounded" />
+        <div className="relative">
+          <video ref={videoRef} className="w-full rounded" />
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="border-4 border-blue-500 w-40 h-40 rounded" />
+          </div>
+        </div>
       </div>
     </div>
   );

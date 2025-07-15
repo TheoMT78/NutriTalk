@@ -295,7 +295,7 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
               {filteredFoods.map((food) => (
                 <div
                   key={food.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0"
                 >
                   <div className="flex-1">
                     <div className="flex items-center space-x-2">
@@ -315,7 +315,7 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-3 sm:ml-4">
                     <button
                       onClick={() => toggleFavorite(food.id)}
                       className={`p-2 rounded-lg transition-colors duration-200 ${
@@ -327,25 +327,30 @@ const FoodSearch: React.FC<FoodSearchProps> = ({ onAddFood }) => {
                       <Star size={16} fill={favorites.includes(food.id) ? 'currentColor' : 'none'} />
                     </button>
                     
-                    <input
-                      type="number"
-                      value={quantities[food.id] || 100}
-                      onChange={(e) => setQuantities(prev => ({
-                        ...prev,
-                        [food.id]: parseFloat(e.target.value) || 100
-                      }))}
-                      className="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-600"
-                      min="1"
-                      step="1"
-                    />
-                    <span className="text-sm text-gray-500">g</span>
-                    
-                    <button
-                      onClick={() => handleAddFood(food)}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
-                    >
-                      Ajouter
-                    </button>
+                    <div className="flex flex-col items-end space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="number"
+                          value={quantities[food.id] || 100}
+                          onChange={(e) =>
+                            setQuantities(prev => ({
+                              ...prev,
+                              [food.id]: parseFloat(e.target.value) || 100,
+                            }))
+                          }
+                          className="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-600"
+                          min="1"
+                          step="1"
+                        />
+                        <span className="text-sm text-gray-500">g</span>
+                      </div>
+                      <button
+                        onClick={() => handleAddFood(food)}
+                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 w-full"
+                      >
+                        Ajouter
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
