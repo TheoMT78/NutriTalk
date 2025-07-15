@@ -1,25 +1,27 @@
 import React from 'react';
-import { Bell, Sun, Moon, Home, Search, BarChart3, UserCircle } from 'lucide-react';
+import React from 'react';
+import { Bell, Sun, Moon, Home, Search, BarChart3, UserCircle, BookOpen } from 'lucide-react';
 import { User as UserType } from '../types';
 
 interface HeaderProps {
   user: UserType;
+
   currentView: string;
   onViewChange: (view: string) => void;
   isDarkMode: boolean;
   onToggleTheme: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ 
-  user, 
-  currentView, 
-  onViewChange, 
-  isDarkMode, 
-  onToggleTheme 
+const Header: React.FC<HeaderProps> = ({
+  currentView,
+  onViewChange,
+  isDarkMode,
+  onToggleTheme
 }) => {
   const navItems = [
     { id: 'dashboard', label: 'Tableau de bord', icon: Home },
     { id: 'search', label: 'Recherche', icon: Search },
+    { id: 'recipes', label: 'Recette', icon: BookOpen },
     { id: 'history', label: 'Historique', icon: BarChart3 },
     { id: 'profile', label: 'Profil', icon: UserCircle },
   ];
@@ -82,14 +84,6 @@ const Header: React.FC<HeaderProps> = ({
               <Bell size={20} />
             </button>
             
-            <div className="flex items-center space-x-2 ml-2">
-              <img 
-                src={user.avatar} 
-                alt="Avatar" 
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              <span className="text-sm font-medium hidden sm:inline">{user.name}</span>
-            </div>
           </div>
         </div>
 

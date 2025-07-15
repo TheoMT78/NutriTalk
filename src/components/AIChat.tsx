@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Mic, MicOff, Bot, User, Loader } from 'lucide-react';
+import { searchProductFallback } from '../utils/openFoodFacts';
+import { findClosestFood } from '../utils/findClosestFood';
+import { Recipe } from '../types';
 
 interface AIChatProps {
   onClose: () => void;
@@ -11,9 +14,15 @@ interface AIChatProps {
     protein: number;
     carbs: number;
     fat: number;
+    fiber?: number;
+    vitaminA?: number;
+    vitaminC?: number;
+    calcium?: number;
+    iron?: number;
     category: string;
     meal: 'petit-déjeuner' | 'déjeuner' | 'dîner' | 'collation';
   }) => void;
+  onAddRecipe?: (recipe: Recipe) => void;
   isDarkMode: boolean;
 }
 
@@ -23,6 +32,7 @@ interface Message {
   content: string;
   timestamp: Date;
   suggestions?: FoodSuggestion[];
+  recipe?: Recipe;
 }
 
 interface FoodSuggestion {
@@ -33,12 +43,17 @@ interface FoodSuggestion {
   protein: number;
   carbs: number;
   fat: number;
+  fiber?: number;
+  vitaminA?: number;
+  vitaminC?: number;
+  calcium?: number;
+  iron?: number;
   category: string;
   meal: 'petit-déjeuner' | 'déjeuner' | 'dîner' | 'collation';
   confidence: number;
 }
 
-const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
+const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, onAddRecipe, isDarkMode }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -56,7 +71,7 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const analyzeFood = (description: string): FoodSuggestion[] => {
+  const analyzeFood = async (description: string): Promise<FoodSuggestion[]> => {
     const suggestions: FoodSuggestion[] = [];
     const lowerDescription = description.toLowerCase();
     
@@ -80,8 +95,9 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
       { keywords: ['pain', 'bread'], food: { name: 'Pain complet', calories: 247, protein: 13, carbs: 41, fat: 4.2, category: 'Féculents', unit: '100g' }},
       { keywords: ['tomate', 'tomato'], food: { name: 'Tomates', calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2, category: 'Légumes', unit: '100g' }},
       { keywords: ['salade', 'salad'], food: { name: 'Salade verte', calories: 15, protein: 1.4, carbs: 2.9, fat: 0.2, category: 'Légumes', unit: '100g' }},
-      { keywords: ['banane', 'banana'], food: { name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, category: 'Fruits', unit: '100g' }},
-      { keywords: ['pomme', 'apple'], food: { name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, category: 'Fruits', unit: '100g' }},
+      { keywords: ['banane', 'banana'], food: { name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, fiber: 2.6, vitaminC: 15, category: 'Fruits', unit: '100g' }},
+      { keywords: ['kiwi jaune', 'kiwi gold', 'kiwi', 'sungold'], food: { name: 'Kiwi jaune', calories: 60, protein: 1.1, carbs: 15, fat: 0.5, fiber: 2, vitaminC: 140, category: 'Fruits', unit: '100g' }},
+      { keywords: ['pomme', 'apple'], food: { name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, fiber: 2.4, vitaminC: 7, category: 'Fruits', unit: '100g' }},
       { keywords: ['yaourt', 'yogurt'], food: { name: 'Yaourt nature 0%', calories: 56, protein: 10, carbs: 4, fat: 0.1, category: 'Produits laitiers', unit: '100g' }},
       { keywords: ['fromage', 'cheese'], food: { name: 'Fromage', calories: 280, protein: 22, carbs: 2.2, fat: 22, category: 'Produits laitiers', unit: '100g' }},
       { keywords: ['bœuf', 'beef'], food: { name: 'Bœuf haché 5%', calories: 137, protein: 20, carbs: 0, fat: 5, category: 'Protéines', unit: '100g' }},
@@ -122,14 +138,79 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
           protein: food.protein * multiplier,
           carbs: food.carbs * multiplier,
           fat: food.fat * multiplier,
+          fiber: (food.fiber || 0) * multiplier,
+          vitaminA: (food.vitaminA || 0) * multiplier,
+          vitaminC: (food.vitaminC || 0) * multiplier,
+          calcium: (food.calcium || 0) * multiplier,
+          iron: (food.iron || 0) * multiplier,
           category: food.category,
           meal,
-          confidence: 0.8 + Math.random() * 0.2
-        });
+        confidence: 0.8 + Math.random() * 0.2
+      });
       }
     });
+    if (suggestions.length === 0) {
+      const closest = findClosestFood(description, foodDatabase.map(f => f.food));
+      if (closest) {
+        suggestions.push({
+          name: closest.name,
+          quantity: 100,
+          unit: closest.unit,
+          calories: closest.calories,
+          protein: closest.protein,
+          carbs: closest.carbs,
+          fat: closest.fat,
+          fiber: closest.fiber,
+          vitaminA: closest.vitaminA,
+          vitaminC: closest.vitaminC,
+          calcium: closest.calcium,
+          iron: closest.iron,
+          category: closest.category,
+          meal,
+          confidence: 0.5,
+        });
+      }
+    }
+
+    if (suggestions.length === 0) {
+      const external = await searchProductFallback(description);
+      external.slice(0, 3).forEach(p => {
+        suggestions.push({
+          name: p.product_name || 'Produit',
+          quantity: 100,
+          unit: p.serving_size?.includes('ml') ? 'ml' : 'g',
+          calories: p.nutriments?.['energy-kcal_100g'] || 0,
+          protein: p.nutriments?.proteins_100g || 0,
+          carbs: p.nutriments?.carbohydrates_100g || 0,
+          fat: p.nutriments?.fat_100g || 0,
+          fiber: p.nutriments?.fiber_100g || 0,
+          vitaminA: p.nutriments?.['vitamin-a_100g'] || 0,
+          vitaminC: p.nutriments?.['vitamin-c_100g'] || 0,
+          calcium: p.nutriments?.['calcium_100g'] || 0,
+          iron: p.nutriments?.['iron_100g'] || 0,
+          category: 'Importé',
+          meal,
+          confidence: 0.6
+        });
+      });
+    }
 
     return suggestions;
+  };
+
+  const parseRecipe = (text: string): Recipe | null => {
+    const lower = text.toLowerCase();
+    if (!lower.includes('ingr')) return null;
+    const nameMatch = text.match(/recette de ([^:.]+)/i);
+    const name = nameMatch ? nameMatch[1].trim() : 'Recette';
+    const ingMatch = text.match(/ingr[ée]dients?:([^.]*)/i);
+    const ingredients = ingMatch ? ingMatch[1].split(/,| et /).map(s => s.trim()).filter(Boolean) : [];
+    const instrMatch = text.match(/instructions?:([^.]*)/i);
+    const instructions = instrMatch ? instrMatch[1].trim() : '';
+    const timeMatch = text.match(/(\d+\s*(?:min|minutes|h|heures))/i);
+    const fridgeMatch = text.match(/frigo[^\d]*(\d+\s*j)/i);
+    const freezerMatch = text.match(/cong\w*[^\d]*(\d+\s*j)/i);
+    return { id: Date.now().toString(), name, ingredients, instructions, prepTime: timeMatch?.[1], fridgeLife: fridgeMatch?.[1], freezerLife: freezerMatch?.[1] };
   };
 
   const handleSendMessage = async () => {
@@ -149,7 +230,8 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
     // Simulated AI processing
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const suggestions = analyzeFood(input);
+    const suggestions = await analyzeFood(input);
+    const recipe = parseRecipe(input);
     
     let aiResponse = '';
     if (suggestions.length > 0) {
@@ -157,11 +239,12 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
       
       suggestions.forEach((suggestion, index) => {
         const totalCalories = suggestion.calories.toFixed(0);
-        aiResponse += `\n\n${index + 1}. **${suggestion.name}** (${suggestion.quantity}${suggestion.unit})
-- ${totalCalories} kcal
-- Protéines: ${suggestion.protein.toFixed(1)}g
-- Glucides: ${suggestion.carbs.toFixed(1)}g  
-- Lipides: ${suggestion.fat.toFixed(1)}g`;
+        const displayUnit = suggestion.unit.replace(/^100/, '');
+        aiResponse += `\n\n${index + 1}. **${suggestion.name}** (${suggestion.quantity}${displayUnit})
+        - ${totalCalories} kcal
+        - Protéines: ${suggestion.protein.toFixed(1)}g
+        - Glucides: ${suggestion.carbs.toFixed(1)}g
+        - Lipides: ${suggestion.fat.toFixed(1)}g`;
       });
       
       aiResponse += '\n\nVoulez-vous ajouter ces aliments à votre journal ? Vous pouvez cliquer sur "Ajouter" pour chaque aliment ou modifier les quantités si nécessaire.';
@@ -174,34 +257,46 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
       type: 'ai',
       content: aiResponse,
       timestamp: new Date(),
-      suggestions: suggestions.length > 0 ? suggestions : undefined
+      suggestions: suggestions.length > 0 ? suggestions : undefined,
+      recipe: recipe || undefined
     };
 
     setMessages(prev => [...prev, aiMessage]);
     setIsLoading(false);
   };
 
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
   const handleVoiceInput = () => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('La reconnaissance vocale n\'est pas supportée par votre navigateur');
+      alert("La reconnaissance vocale n'est pas supportée par votre navigateur");
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current?.stop();
       return;
     }
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = new SpeechRecognition();
-    
+    recognitionRef.current = recognition;
+
     recognition.lang = 'fr-FR';
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.continuous = true;
+    recognition.interimResults = true;
 
     recognition.onstart = () => {
       setIsListening(true);
     };
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript;
+
+      const transcript = Array.from(event.results)
+        .map(r => r[0].transcript)
+        .join(' ');
+
       setInput(transcript);
-      setIsListening(false);
     };
 
     recognition.onerror = () => {
@@ -300,7 +395,8 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
                           <div className="flex-1">
                             <div className="font-medium">{suggestion.name}</div>
                             <div className="text-sm opacity-70">
-                              {suggestion.quantity}{suggestion.unit} • {suggestion.calories.toFixed(0)} kcal
+                              {suggestion.quantity}
+                              {suggestion.unit.replace(/^100/, '')} • {suggestion.calories.toFixed(0)} kcal
                             </div>
                           </div>
                           <button
@@ -312,6 +408,42 @@ const AIChat: React.FC<AIChatProps> = ({ onClose, onAddFood, isDarkMode }) => {
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+                {message.recipe && (
+                  <div className="mt-4 space-y-2 text-sm">
+                    <div className="font-semibold">{message.recipe.name}</div>
+                    {message.recipe.ingredients.length > 0 && (
+                      <div>
+                        <div className="font-medium">Ingrédients:</div>
+                        <ul className="list-disc list-inside">
+                          {message.recipe.ingredients.map((ing, i) => (
+                            <li key={i}>{ing}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {message.recipe.instructions && (
+                      <div>
+                        <div className="font-medium">Instructions:</div>
+                        <p>{message.recipe.instructions}</p>
+                      </div>
+                    )}
+                    {(message.recipe.prepTime || message.recipe.fridgeLife || message.recipe.freezerLife) && (
+                      <div className="space-y-1">
+                        {message.recipe.prepTime && <div>Préparation: {message.recipe.prepTime}</div>}
+                        {message.recipe.fridgeLife && <div>Conservation frigo: {message.recipe.fridgeLife}</div>}
+                        {message.recipe.freezerLife && <div>Conservation congélo: {message.recipe.freezerLife}</div>}
+                      </div>
+                    )}
+                    {onAddRecipe && (
+                      <button
+                        onClick={() => onAddRecipe(message.recipe!)}
+                        className="mt-2 bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                      >
+                        Ajouter à mes recettes
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

@@ -55,12 +55,12 @@ export const foodDatabase: FoodItem[] = [
   { id: '47', name: 'Radis', calories: 16, protein: 0.7, carbs: 3.4, fat: 0.1, category: 'Légumes', unit: '100g' },
 
   // Fruits
-  { id: '48', name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, category: 'Fruits', unit: '100g' },
-  { id: '49', name: 'Poire', calories: 57, protein: 0.4, carbs: 15, fat: 0.1, category: 'Fruits', unit: '100g' },
-  { id: '50', name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, category: 'Fruits', unit: '100g' },
-  { id: '51', name: 'Orange', calories: 47, protein: 0.9, carbs: 12, fat: 0.1, category: 'Fruits', unit: '100g' },
+  { id: '48', name: 'Pomme', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, fiber: 2.4, vitaminC: 7, category: 'Fruits', unit: '100g' },
+  { id: '49', name: 'Poire', calories: 57, protein: 0.4, carbs: 15, fat: 0.1, fiber: 3.1, vitaminC: 5, category: 'Fruits', unit: '100g' },
+  { id: '50', name: 'Banane', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, fiber: 2.6, vitaminC: 15, category: 'Fruits', unit: '100g' },
+  { id: '51', name: 'Orange', calories: 47, protein: 0.9, carbs: 12, fat: 0.1, fiber: 2.4, vitaminC: 89, category: 'Fruits', unit: '100g' },
   { id: '52', name: 'Pamplemousse', calories: 42, protein: 0.8, carbs: 11, fat: 0.1, category: 'Fruits', unit: '100g' },
-  { id: '53', name: 'Fraises', calories: 32, protein: 0.7, carbs: 8, fat: 0.3, category: 'Fruits', unit: '100g' },
+  { id: '53', name: 'Fraises', calories: 32, protein: 0.7, carbs: 8, fat: 0.3, fiber: 2, vitaminC: 59, category: 'Fruits', unit: '100g' },
   { id: '54', name: 'Kiwi', calories: 61, protein: 1.1, carbs: 15, fat: 0.5, category: 'Fruits', unit: '100g' },
   { id: '55', name: 'Ananas', calories: 50, protein: 0.5, carbs: 13, fat: 0.1, category: 'Fruits', unit: '100g' },
   { id: '56', name: 'Mangue', calories: 60, protein: 0.8, carbs: 15, fat: 0.4, category: 'Fruits', unit: '100g' },
@@ -117,5 +117,29 @@ export const foodDatabase: FoodItem[] = [
   { id: '97', name: 'Biscuits secs', calories: 416, protein: 6.6, carbs: 72, fat: 12, category: 'Snacks', unit: '100g' },
   { id: '98', name: 'Chips', calories: 536, protein: 7, carbs: 53, fat: 34, category: 'Snacks', unit: '100g' },
   { id: '99', name: 'Pop-corn', calories: 387, protein: 12, carbs: 78, fat: 5, category: 'Snacks', unit: '100g' },
-  { id: '100', name: 'Barres de céréales', calories: 384, protein: 6, carbs: 67, fat: 11, category: 'Snacks', unit: '100g' }
+  { id: '100', name: 'Barres de céréales', calories: 384, protein: 6, carbs: 67, fat: 11, category: 'Snacks', unit: '100g' },
+
+  // Féculents crus supplémentaires
+  { id: '101', name: 'Riz blanc cru', calories: 360, protein: 7, carbs: 80, fat: 0.6, category: 'Féculents', unit: '100g' },
+  { id: '102', name: 'Riz basmati cru', calories: 350, protein: 8, carbs: 78, fat: 0.8, category: 'Féculents', unit: '100g' },
+  { id: '103', name: 'Riz complet cru', calories: 362, protein: 7.5, carbs: 76, fat: 2.8, category: 'Féculents', unit: '100g' },
+  { id: '104', name: 'Pâtes crues', calories: 371, protein: 13, carbs: 74, fat: 1.5, category: 'Féculents', unit: '100g' },
+  { id: '105', name: 'Pâtes complètes crues', calories: 348, protein: 14, carbs: 72, fat: 2.5, category: 'Féculents', unit: '100g' },
+  { id: '106', name: 'Quinoa cru', calories: 368, protein: 14, carbs: 64, fat: 6, category: 'Féculents', unit: '100g' },
+  { id: '107', name: 'Couscous cru', calories: 376, protein: 12, carbs: 77, fat: 0.6, category: 'Féculents', unit: '100g' },
+  // Quelques fruits supplémentaires
+  { id: '108', name: 'Framboises', calories: 52, protein: 1.2, carbs: 12, fat: 0.7, category: 'Fruits', unit: '100g' },
+  { id: '109', name: 'Myrtilles', calories: 57, protein: 0.7, carbs: 14, fat: 0.3, category: 'Fruits', unit: '100g' },
+  { id: '110', name: 'Groseilles', calories: 56, protein: 1.4, carbs: 13, fat: 0.2, category: 'Fruits', unit: '100g' },
+  { id: '111', name: 'Pignons de pin', calories: 673, protein: 14, carbs: 13, fat: 68, category: 'Fruits secs', unit: '100g' },
+  { id: '112', name: 'Farine de blé', calories: 364, protein: 10, carbs: 76, fat: 1, category: 'Féculents', unit: '100g' },
+  { id: '113', name: 'Semoule de maïs', calories: 370, protein: 7, carbs: 79, fat: 1, category: 'Féculents', unit: '100g' },
+  { id: '114', name: 'Pois cassés cuits', calories: 118, protein: 8, carbs: 21, fat: 0.4, category: 'Légumineuses', unit: '100g' },
+  { id: '115', name: 'Pois cassés secs', calories: 320, protein: 23, carbs: 53, fat: 1.4, category: 'Légumineuses', unit: '100g' },
+  { id: '116', name: 'Courge butternut', calories: 45, protein: 1, carbs: 12, fat: 0.1, category: 'Légumes', unit: '100g' },
+  { id: '117', name: 'Chou kale', calories: 49, protein: 4.3, carbs: 9, fat: 0.9, category: 'Légumes', unit: '100g' },
+  { id: '118', name: 'Grenade', calories: 83, protein: 1.7, carbs: 19, fat: 1.2, category: 'Fruits', unit: '100g' },
+  { id: '119', name: 'Patate douce cuite', calories: 90, protein: 1.6, carbs: 20, fat: 0.1, category: 'Féculents', unit: '100g' },
+  { id: '120', name: 'Patate douce crue', calories: 86, protein: 1.6, carbs: 20, fat: 0.1, category: 'Féculents', unit: '100g' },
+  { id: '121', name: 'Kiwi jaune', calories: 60, protein: 1.1, carbs: 15, fat: 0.5, category: 'Fruits', unit: '100g' }
 ];
