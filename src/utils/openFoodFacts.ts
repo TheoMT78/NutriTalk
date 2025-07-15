@@ -61,5 +61,3 @@ export async function searchProductFallback(query: string): Promise<OFFProduct[]
   }
   return [];
 }
-
-}
