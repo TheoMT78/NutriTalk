@@ -5,11 +5,13 @@ export interface MacroTargets {
   fat: number;
 }
 
-export function calculateTDEE({ weight, height, age, gender, activityLevel, goal }: { weight: number; height: number; age: number; gender: 'homme' | 'femme'; activityLevel: string; goal: 'perte' | 'maintien' | 'prise'; }): number {
-  // Mifflin-St Jeor
+export function calculateTDEE({ weight, height, age, gender, activityLevel, goal }:
+  { weight: number; height: number; age: number; gender: 'homme' | 'femme'; activityLevel: string; goal: 'perte' | 'maintien' | 'prise'; }): number {
+  // Formule de Mifflin-St Jeor
   const bmr = gender === 'homme'
     ? 10 * weight + 6.25 * height - 5 * age + 5
     : 10 * weight + 6.25 * height - 5 * age - 161;
+
   const activityMultipliers: Record<string, number> = {
     'sédentaire': 1.2,
     'légère': 1.375,
@@ -17,9 +19,13 @@ export function calculateTDEE({ weight, height, age, gender, activityLevel, goal
     'élevée': 1.725,
     'très élevée': 1.9
   };
+
   const tdee = bmr * (activityMultipliers[activityLevel] || 1.2);
-  const goalOffset = goal === 'perte' ? -500 : goal === 'prise' ? 500 : 0;
-  return Math.round(tdee + goalOffset);
+
+  // Ajustement selon l'objectif (±10 % du TDEE)
+  const goalMultiplier = goal === 'perte' ? 0.9 : goal === 'prise' ? 1.1 : 1;
+
+  return Math.round(tdee * goalMultiplier);
 }
 
 export function calculateMacroTargets(calories: number): Omit<MacroTargets, 'calories'> {

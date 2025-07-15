@@ -67,9 +67,9 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
       'modérée': 1.55,
       'élevée': 1.725,
       'très élevée': 1.9
-    };
-    
-    return Math.round(bmr * activityMultipliers[formData.activityLevel as keyof typeof activityMultipliers]);
+    } as const;
+
+    return Math.round(bmr * (activityMultipliers[formData.activityLevel as keyof typeof activityMultipliers] || 1.2));
   };
 
   const exportData = () => {
@@ -257,14 +257,20 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
                   onChange={(e) => setFormData(prev => ({ ...prev, activityLevel: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700"
                 >
-                  <option value="sédentaire">Sédentaire</option>
-                  <option value="légère">Légère</option>
-                  <option value="modérée">Modérée</option>
-                  <option value="élevée">Élevée</option>
-                  <option value="très élevée">Très élevée</option>
+                  <option value="sédentaire">0-1 activité/semaine</option>
+                  <option value="légère">1-2 activités/semaine</option>
+                  <option value="modérée">3-5 activités/semaine</option>
+                  <option value="élevée">6-7 activités/semaine</option>
+                  <option value="très élevée">Plus de 7 activités/semaine</option>
                 </select>
               ) : (
-                <p className="text-gray-700 dark:text-gray-300 capitalize">{user.activityLevel}</p>
+                <p className="text-gray-700 dark:text-gray-300">
+                  {user.activityLevel === 'sédentaire' && '0-1 activité/semaine'}
+                  {user.activityLevel === 'légère' && '1-2 activités/semaine'}
+                  {user.activityLevel === 'modérée' && '3-5 activités/semaine'}
+                  {user.activityLevel === 'élevée' && '6-7 activités/semaine'}
+                  {user.activityLevel === 'très élevée' && 'Plus de 7 activités/semaine'}
+                </p>
               )}
             </div>
 
