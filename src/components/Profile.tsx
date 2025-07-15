@@ -329,16 +329,16 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
                   onChange={(e) => setFormData(prev => ({ ...prev, goal: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700"
                 >
-                  <option value="perte5">Perte légère (-5%)</option>
                   <option value="perte10">Perte modérée (-10%)</option>
+                  <option value="perte5">Perte légère (-5%)</option>
                   <option value="maintien">Maintien</option>
                   <option value="prise5">Prise légère (+5%)</option>
                   <option value="prise10">Prise modérée (+10%)</option>
                 </select>
               ) : (
                 <p className="text-gray-700 dark:text-gray-300">
-                  {user.goal === 'perte5' ? 'Perte légère (-5%)' :
-                   user.goal === 'perte10' ? 'Perte modérée (-10%)' :
+                  {user.goal === 'perte10' ? 'Perte modérée (-10%)' :
+                   user.goal === 'perte5' ? 'Perte légère (-5%)' :
                    user.goal === 'prise5' ? 'Prise légère (+5%)' :
                    user.goal === 'prise10' ? 'Prise modérée (+10%)' : 'Maintien'}
                 </p>

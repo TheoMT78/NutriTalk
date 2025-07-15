@@ -10,34 +10,19 @@ const History: React.FC<HistoryProps> = ({ user }) => {
   const [currentView, setCurrentView] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Données simulées pour l'historique
-  const generateHistoryData = () => {
-    const data = [];
-    const today = new Date();
-    
-    for (let i = 0; i < 30; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
-      
-      const baseCalories = user.dailyCalories;
-      const variation = (Math.random() - 0.5) * 400;
-      
-      data.push({
-        date: date.toISOString().split('T')[0],
-        calories: Math.round(baseCalories + variation),
-        protein: Math.round(user.dailyProtein + (Math.random() - 0.5) * 40),
-        carbs: Math.round(user.dailyCarbs + (Math.random() - 0.5) * 60),
-        fat: Math.round(user.dailyFat + (Math.random() - 0.5) * 20),
-        water: Math.round(1500 + Math.random() * 1000),
-        weight: Math.round((user.weight + (Math.random() - 0.5) * 2) * 10) / 10,
-        meals: Math.floor(Math.random() * 5) + 1
-      });
-    }
-    
-    return data.reverse();
-  };
+  // Historique vide au premier lancement
+  interface HistoryDay {
+    date: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    water: number;
+    weight: number;
+    meals: number;
+  }
 
-  const historyData = generateHistoryData();
+  const [historyData] = useState<HistoryDay[]>([]);
 
   const getCurrentPeriodData = () => {
     const data = historyData.slice(-7);
@@ -83,10 +68,18 @@ const History: React.FC<HistoryProps> = ({ user }) => {
   };
 
   const currentData = getCurrentPeriodData();
-  const avgCalories = Math.round(currentData.reduce((sum, day) => sum + day.calories, 0) / currentData.length);
-  const avgProtein = Math.round(currentData.reduce((sum, day) => sum + day.protein, 0) / currentData.length);
-  const avgCarbs = Math.round(currentData.reduce((sum, day) => sum + day.carbs, 0) / currentData.length);
-  const avgFat = Math.round(currentData.reduce((sum, day) => sum + day.fat, 0) / currentData.length);
+  const avgCalories = currentData.length
+    ? Math.round(currentData.reduce((sum, day) => sum + day.calories, 0) / currentData.length)
+    : 0;
+  const avgProtein = currentData.length
+    ? Math.round(currentData.reduce((sum, day) => sum + day.protein, 0) / currentData.length)
+    : 0;
+  const avgCarbs = currentData.length
+    ? Math.round(currentData.reduce((sum, day) => sum + day.carbs, 0) / currentData.length)
+    : 0;
+  const avgFat = currentData.length
+    ? Math.round(currentData.reduce((sum, day) => sum + day.fat, 0) / currentData.length)
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -204,7 +197,10 @@ const History: React.FC<HistoryProps> = ({ user }) => {
       {/* Graphique des calories */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold mb-6">Évolution des calories</h3>
-        
+
+        {historyData.length === 0 ? (
+          <p className="text-sm text-gray-500">Aucune donnée pour le moment</p>
+        ) : (
         <div className="space-y-4">
           {historyData.slice(-14).map((day) => {
             const percentage = (day.calories / user.dailyCalories) * 100;
@@ -238,6 +234,7 @@ const History: React.FC<HistoryProps> = ({ user }) => {
             );
           })}
         </div>
+        )}
       </div>
 
       {/* Tableau détaillé */}
@@ -245,7 +242,10 @@ const History: React.FC<HistoryProps> = ({ user }) => {
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-lg font-semibold">Détails par jour</h3>
         </div>
-        
+
+        {historyData.length === 0 ? (
+          <p className="p-6 text-sm text-gray-500">Aucune donnée pour le moment</p>
+        ) : (
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-gray-700">
@@ -307,6 +307,7 @@ const History: React.FC<HistoryProps> = ({ user }) => {
             </tbody>
           </table>
         </div>
+        )}
       </div>
     </div>
   );

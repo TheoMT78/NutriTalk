@@ -43,6 +43,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   const stepsCalories = Math.max(0, dailyLog.steps - 4000) * CALORIES_PER_STEP;
   const totalGoal = user.dailyCalories + stepsCalories;
   const caloriesRemaining = totalGoal - dailyLog.totalCalories;
+  const extraCarbs = stepsCalories / 4;
+  const totalCarbGoal = user.dailyCarbs + extraCarbs;
 
   const groupedEntries = dailyLog.entries.reduce((acc, entry) => {
     if (!acc[entry.meal]) {
@@ -111,7 +113,12 @@ const Dashboard: React.FC<DashboardProps> = ({
               <p className="text-2xl font-bold text-orange-600">
                 {dailyLog.totalCarbs.toFixed(0)}g
               </p>
-              <p className="text-sm text-gray-500">/ {user.dailyCarbs}g</p>
+              <p className="text-sm text-gray-500">
+                / {totalCarbGoal.toFixed(0)}g
+              </p>
+              {extraCarbs > 0 && (
+                <p className="text-xs text-gray-500">+{extraCarbs.toFixed(0)}g après activité</p>
+              )}
             </div>
             <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center">
               <Apple className="text-orange-600 dark:text-orange-400" size={20} />

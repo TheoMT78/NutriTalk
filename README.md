@@ -16,5 +16,7 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Connexion par email avec création de compte locale.
 - Interface en mode sombre par défaut.
 - Progression des calories ajustée automatiquement avec les pas effectués.
+- Les glucides recommandés augmentent selon les calories brûlées.
+- L'historique est vide au départ et se remplit avec vos entrées.
 
 Ces fonctionnalités reposent sur l'API publique OpenFoodFacts.
