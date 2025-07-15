@@ -2,15 +2,17 @@ import React from 'react';
 import { Target } from 'lucide-react';
 
 interface CalorieProgressProps {
-  current: number;
+  consumed: number;
+  burned: number;
   target: number;
   className?: string;
 }
 
-const CalorieProgress: React.FC<CalorieProgressProps> = ({ current, target, className = '' }) => {
-  const percentage = Math.min((current / target) * 100, 100);
-  const remaining = Math.max(target - current, 0);
-  const isOverTarget = current > target;
+const CalorieProgress: React.FC<CalorieProgressProps> = ({ consumed, burned, target, className = '' }) => {
+  const totalTarget = target + burned;
+  const percentage = Math.min((consumed / totalTarget) * 100, 100);
+  const remaining = Math.max(totalTarget - consumed, 0);
+  const isOverTarget = consumed > totalTarget;
 
   return (
     <div className={className}>
@@ -20,7 +22,7 @@ const CalorieProgress: React.FC<CalorieProgressProps> = ({ current, target, clas
           Progression Calories
         </h3>
         <span className="text-sm text-gray-600 dark:text-gray-400">
-          {current.toFixed(0)} / {target} kcal
+          {consumed.toFixed(0)} / {totalTarget.toFixed(0)} kcal
         </span>
       </div>
 
@@ -85,7 +87,7 @@ const CalorieProgress: React.FC<CalorieProgressProps> = ({ current, target, clas
                 Calories en excès
               </span>
               <span className="text-sm font-medium text-red-600">
-                +{(current - target).toFixed(0)} kcal
+                +{(consumed - totalTarget).toFixed(0)} kcal
               </span>
             </div>
           )}
@@ -95,7 +97,7 @@ const CalorieProgress: React.FC<CalorieProgressProps> = ({ current, target, clas
               Consommées
             </span>
             <span className="text-sm font-medium">
-              {current.toFixed(0)} kcal
+              {consumed.toFixed(0)} kcal
             </span>
           </div>
           
@@ -104,7 +106,7 @@ const CalorieProgress: React.FC<CalorieProgressProps> = ({ current, target, clas
               Objectif
             </span>
             <span className="text-sm font-medium">
-              {target} kcal
+              {totalTarget.toFixed(0)} kcal
             </span>
           </div>
         </div>

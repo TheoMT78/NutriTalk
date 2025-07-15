@@ -6,11 +6,14 @@ export interface User {
   height: number;
   gender: 'homme' | 'femme';
   activityLevel: 'sédentaire' | 'légère' | 'modérée' | 'élevée' | 'très élevée';
-  goal: 'perte' | 'maintien' | 'prise';
+  goal: 'perte5' | 'perte10' | 'maintien' | 'prise5' | 'prise10';
   dailyCalories: number;
   dailyProtein: number;
   dailyCarbs: number;
   dailyFat: number;
+  dailyWater: number;
+  password?: string;
+  stepGoal: number;
   avatar: string;
   theme: 'light' | 'dark' | 'auto';
   notifications: boolean;
@@ -25,6 +28,11 @@ export interface FoodEntry {
   protein: number;
   carbs: number;
   fat: number;
+  fiber?: number;
+  vitaminA?: number;
+  vitaminC?: number;
+  calcium?: number;
+  iron?: number;
   category: string;
   meal: 'petit-déjeuner' | 'déjeuner' | 'dîner' | 'collation';
   timestamp: string;
@@ -38,6 +46,9 @@ export interface DailyLog {
   totalCarbs: number;
   totalFat: number;
   water: number;
+  steps: number;
+  targetCalories: number;
+  weight?: number;
 }
 
 export interface FoodItem {
@@ -47,8 +58,23 @@ export interface FoodItem {
   protein: number;
   carbs: number;
   fat: number;
+  fiber?: number;
+  vitaminA?: number;
+  vitaminC?: number;
+  calcium?: number;
+  iron?: number;
   category: string;
   unit: string;
   isFavorite?: boolean;
   isCustom?: boolean;
+}
+
+export interface Recipe {
+  id: string;
+  name: string;
+  ingredients: string[];
+  instructions: string;
+  prepTime?: string;
+  fridgeLife?: string;
+  freezerLife?: string;
 }
