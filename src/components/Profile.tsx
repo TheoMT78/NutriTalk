@@ -480,6 +480,26 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdateUser, onLogout }) => {
               <p className="text-gray-700 dark:text-gray-300">{user.stepGoal} pas</p>
             )}
           </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Hydratation quotidienne</label>
+            {isEditing ? (
+              <NumberStepper
+                value={formData.dailyWater}
+                onChange={(val) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    dailyWater: typeof val === 'number' ? val : val(prev.dailyWater)
+                  }))
+                }
+                locked={false}
+                onToggleLock={() => {}}
+                showLock={false}
+              />
+            ) : (
+              <p className="text-gray-700 dark:text-gray-300">{user.dailyWater} ml</p>
+            )}
+          </div>
         </div>
       </div>
 

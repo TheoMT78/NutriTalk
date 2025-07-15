@@ -190,32 +190,38 @@ const Dashboard: React.FC<DashboardProps> = ({
             Hydratation
           </h3>
           <span className="text-sm text-gray-600 dark:text-gray-400">
-            {dailyLog.water}ml / 2000ml
+            {dailyLog.water}ml / {user.dailyWater}ml
           </span>
         </div>
         <div className="flex items-center space-x-4 mb-4">
           <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
             <div 
               className="bg-blue-500 h-3 rounded-full transition-all duration-300"
-              style={{ width: `${Math.min((dailyLog.water / 2000) * 100, 100)}%` }}
+              style={{ width: `${Math.min((dailyLog.water / user.dailyWater) * 100, 100)}%` }}
             />
           </div>
           <span className="text-sm font-medium">
-            {Math.round((dailyLog.water / 2000) * 100)}%
+            {Math.round((dailyLog.water / user.dailyWater) * 100)}%
           </span>
         </div>
         <div className="flex space-x-2">
           <button
-            onClick={() => onUpdateWater(250)}
+            onClick={() => onUpdateWater(1000)}
             className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200"
           >
-            +250ml
+            +1L
           </button>
           <button
             onClick={() => onUpdateWater(500)}
             className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200"
           >
             +500ml
+          </button>
+          <button
+            onClick={() => onUpdateWater(250)}
+            className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+          >
+            +250ml
           </button>
           <button
             onClick={() => onUpdateWater(-250)}

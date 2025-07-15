@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard';
 import FoodSearch from './components/FoodSearch';
 import Profile from './components/Profile';
 import History from './components/History';
+import Recipes from './components/Recipes';
 import AIChat from './components/AIChat';
 import FloatingAIButton from './components/FloatingAIButton';
 import Login from './components/Login';
@@ -25,7 +26,8 @@ function App() {
     theme: 'dark' as const,
     notifications: true,
     password: 'password',
-    stepGoal: 10000
+    stepGoal: 10000,
+    dailyWater: 2000
   };
 
   const targets = computeDailyTargets(defaultUser);
@@ -35,7 +37,8 @@ function App() {
     dailyCalories: targets.calories,
     dailyProtein: targets.protein,
     dailyCarbs: targets.carbs,
-    dailyFat: targets.fat
+    dailyFat: targets.fat,
+    dailyWater: defaultUser.dailyWater
   });
 
   const [dailyLog, setDailyLog] = useLocalStorage<DailyLog>('nutritalk-daily-log', {
@@ -160,6 +163,8 @@ function App() {
         );
       case 'search':
         return <FoodSearch onAddFood={addFoodEntry} />;
+      case 'recipes':
+        return <Recipes />;
       case 'profile':
         return <Profile user={user} onUpdateUser={setUser} onLogout={() => setLoggedIn(false)} />;
       case 'history':
@@ -183,9 +188,8 @@ function App() {
     <div className={`min-h-screen transition-colors duration-300 ${
       isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
     }`}>
-      <Header 
-        user={user} 
-        currentView={currentView} 
+      <Header
+        currentView={currentView}
         onViewChange={setCurrentView}
         isDarkMode={isDarkMode}
         onToggleTheme={() => {

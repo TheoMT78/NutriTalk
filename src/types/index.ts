@@ -11,6 +11,7 @@ export interface User {
   dailyProtein: number;
   dailyCarbs: number;
   dailyFat: number;
+  dailyWater: number;
   password?: string;
   stepGoal: number;
   avatar: string;

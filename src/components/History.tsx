@@ -26,7 +26,23 @@ const History: React.FC<HistoryProps> = ({ user, weightHistory }) => {
     meals: number;
   }
 
-  const [historyData] = useState<HistoryDay[]>([]);
+  const sampleHistory: HistoryDay[] = Array.from({ length: 7 }).map((_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    return {
+      date: date.toISOString().split('T')[0],
+      calories: 2000 + (i % 2 === 0 ? 100 : -100),
+      protein: 140 + i,
+      carbs: 250 + i * 5,
+      fat: 70 + i,
+      water: 1800 + i * 100,
+      weight: user.weight + (i - 3) * 0.2,
+      steps: 8000 + i * 500,
+      meals: 3
+    };
+  });
+
+  const [historyData] = useState<HistoryDay[]>(sampleHistory);
 
   const getCurrentPeriodData = () => {
     const days = currentView === 'monthly' ? 30 : currentView === 'weekly' ? 7 : 7;
