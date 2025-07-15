@@ -16,6 +16,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const vid = videoRef.current;
     const start = async () => {
       const Detector = (window as unknown as { BarcodeDetector?: BarcodeDetectorClass }).BarcodeDetector;
       if (!Detector) {
@@ -54,8 +55,8 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
     };
     start();
     return () => {
-      if (videoRef.current?.srcObject) {
-        (videoRef.current.srcObject as MediaStream).getTracks().forEach(t => t.stop());
+      if (vid?.srcObject) {
+        (vid.srcObject as MediaStream).getTracks().forEach(t => t.stop());
       }
     };
   }, [onResult, onClose]);
