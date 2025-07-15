@@ -3,6 +3,7 @@ import { Target, TrendingUp, Droplets, Trash2, Edit3, Coffee, Utensils, Moon as 
 import { User, DailyLog } from '../types';
 import MacroDetailsModal from './MacroDetailsModal';
 import StepProgress, { CALORIES_PER_STEP } from './StepProgress';
+import WaterProgress from './WaterProgress';
 import CalorieProgress from './CalorieProgress';
 import WeightChart from './WeightChart';
 
@@ -55,11 +56,21 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   const groupedEntries = dailyLog.entries.reduce((acc, entry) => {
     if (!acc[entry.meal]) {
-      acc[entry.meal] = [];
+      acc[entry.meal] = {} as Record<string, typeof entry>;
     }
-    acc[entry.meal].push(entry);
+    const key = `${entry.name}-${entry.unit}`;
+    if (acc[entry.meal][key]) {
+      const existing = acc[entry.meal][key];
+      existing.quantity += entry.quantity;
+      existing.calories += entry.calories;
+      existing.protein += entry.protein;
+      existing.carbs += entry.carbs;
+      existing.fat += entry.fat;
+    } else {
+      acc[entry.meal][key] = { ...entry };
+    }
     return acc;
-  }, {} as Record<string, typeof dailyLog.entries>);
+  }, {} as Record<string, Record<string, typeof dailyLog.entries[0]>>);
 
   const mealOrder = ['petit-déjeuner', 'déjeuner', 'dîner', 'collation'];
 
@@ -106,7 +117,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 {dailyLog.totalProtein.toFixed(0)}g
               </p>
               <p className="text-sm text-gray-500">/ {user.dailyProtein}g</p>
-              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div className="mt-1 w-2/3 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
                   className="bg-green-500 h-2 rounded-full"
                   style={{ width: `${Math.min((dailyLog.totalProtein / user.dailyProtein) * 100, 100)}%` }}
@@ -132,7 +143,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               {extraCarbs > 0 && (
                 <p className="text-xs text-gray-500">+{extraCarbs.toFixed(0)}g après activité</p>
               )}
-              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div className="mt-1 w-2/3 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
                   className="bg-orange-500 h-2 rounded-full"
                   style={{ width: `${Math.min((dailyLog.totalCarbs / totalCarbGoal) * 100, 100)}%` }}
@@ -153,7 +164,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 {dailyLog.totalFat.toFixed(0)}g
               </p>
               <p className="text-sm text-gray-500">/ {user.dailyFat}g</p>
-              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div className="mt-1 w-2/3 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
                   className="bg-purple-500 h-2 rounded-full"
                   style={{ width: `${Math.min((dailyLog.totalFat / user.dailyFat) * 100, 100)}%` }}
@@ -183,6 +194,12 @@ const Dashboard: React.FC<DashboardProps> = ({
           onUpdate={onUpdateSteps}
           className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
         />
+        <WaterProgress
+          current={dailyLog.water}
+          target={user.dailyWater}
+          onUpdate={onUpdateWater}
+          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
+        />
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Poids</p>
           <p className="text-2xl font-bold mb-2">{user.weight.toFixed(1)} kg</p>
@@ -198,55 +215,6 @@ const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {/* Hydratation */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold flex items-center">
-            <Droplets className="text-blue-500 mr-2" size={20} />
-            Hydratation
-          </h3>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            {dailyLog.water}ml / {user.dailyWater}ml
-          </span>
-        </div>
-        <div className="flex items-center space-x-4 mb-4">
-          <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-            <div 
-              className="bg-blue-500 h-3 rounded-full transition-all duration-300"
-              style={{ width: `${Math.min((dailyLog.water / user.dailyWater) * 100, 100)}%` }}
-            />
-          </div>
-          <span className="text-sm font-medium">
-            {Math.round((dailyLog.water / user.dailyWater) * 100)}%
-          </span>
-        </div>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => onUpdateWater(1000)}
-            className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200"
-          >
-            +1L
-          </button>
-          <button
-            onClick={() => onUpdateWater(500)}
-            className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200"
-          >
-            +500ml
-          </button>
-          <button
-            onClick={() => onUpdateWater(250)}
-            className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200"
-          >
-            +250ml
-          </button>
-          <button
-            onClick={() => onUpdateWater(-250)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
-          >
-            -250ml
-          </button>
-        </div>
-      </div>
 
       {/* Journal alimentaire */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
@@ -264,9 +232,9 @@ const Dashboard: React.FC<DashboardProps> = ({
         
         <div className="p-6 space-y-6">
           {mealOrder.map((meal) => {
-            const entries = groupedEntries[meal] || [];
+            const mealEntries = Object.values(groupedEntries[meal] || {});
             const MealIcon = getMealIcon(meal);
-            const mealCalories = entries.reduce((sum, entry) => sum + entry.calories, 0);
+            const mealCalories = mealEntries.reduce((sum, entry) => sum + entry.calories, 0);
             
             return (
               <div key={meal} className="border-l-4 border-blue-500 pl-4">
@@ -280,48 +248,50 @@ const Dashboard: React.FC<DashboardProps> = ({
                   </span>
                 </div>
                 
-                {entries.length === 0 ? (
+                {mealEntries.length === 0 ? (
                   <p className="text-sm text-gray-500 dark:text-gray-400 italic">
                     Aucun aliment ajouté pour ce repas
                   </p>
                 ) : (
                   <div className="space-y-2">
-                    {entries.map((entry) => (
-                      <div 
-                        key={entry.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
-                      >
-                        <div className="flex-1">
+                    {mealEntries.map((entry) => {
+                      const displayUnit = entry.unit.replace(/^100/, '');
+                      const qty = `${entry.quantity}${displayUnit.startsWith('g') || displayUnit.startsWith('ml') ? displayUnit : ' ' + displayUnit}`;
+                      return (
+                        <div
+                          key={entry.name}
+                          className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium">{entry.name}</span>
+                              <span className="text-sm text-gray-500">{qty}</span>
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                              {entry.calories.toFixed(0)} kcal •
+                              P: {entry.protein.toFixed(0)}g •
+                              G: {entry.carbs.toFixed(0)}g •
+                              L: {entry.fat.toFixed(0)}g
+                            </div>
+                          </div>
                           <div className="flex items-center space-x-2">
-                            <span className="font-medium">{entry.name}</span>
-                            <span className="text-sm text-gray-500">
-                              {entry.quantity} {entry.unit}
-                            </span>
-                          </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            {entry.calories.toFixed(0)} kcal • 
-                            P: {entry.protein.toFixed(0)}g • 
-                            G: {entry.carbs.toFixed(0)}g • 
-                            L: {entry.fat.toFixed(0)}g
+                            <button
+                              className="p-1 text-gray-500 hover:text-blue-500 transition-colors duration-200"
+                              title="Modifier"
+                            >
+                              <Edit3 size={16} />
+                            </button>
+                            <button
+                              onClick={() => onRemoveEntry(entry.id)}
+                              className="p-1 text-gray-500 hover:text-red-500 transition-colors duration-200"
+                              title="Supprimer"
+                            >
+                              <Trash2 size={16} />
+                            </button>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            className="p-1 text-gray-500 hover:text-blue-500 transition-colors duration-200"
-                            title="Modifier"
-                          >
-                            <Edit3 size={16} />
-                          </button>
-                          <button
-                            onClick={() => onRemoveEntry(entry.id)}
-                            className="p-1 text-gray-500 hover:text-red-500 transition-colors duration-200"
-                            title="Supprimer"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>

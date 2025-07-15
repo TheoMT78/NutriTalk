@@ -7,7 +7,7 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ user, onLogin }) => {
-  const [email, setEmail] = useState(user.email);
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignup, setIsSignup] = useState(!user.password);
 
@@ -34,6 +34,7 @@ const Login: React.FC<LoginProps> = ({ user, onLogin }) => {
           <label className="block text-sm mb-1">Email</label>
           <input
             type="email"
+            placeholder="user@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none"

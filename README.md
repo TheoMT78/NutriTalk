@@ -31,8 +31,10 @@ Cette application React permet de suivre votre alimentation et vos objectifs nut
 - Historique d'exemple d'un an pour visualiser immédiatement les graphiques.
 - Historique vide par défaut et calendrier plus large avec cases réduites.
 - Un clic sur la progression des calories affiche un tableau détaillé des macro et micronutriments.
+- Le tableau des macros est désormais défilable pour rester lisible sur mobile.
 - Les cartes Protéines, Glucides et Lipides affichent une barre de progression.
 - Objectif d'hydratation personnalisable avec des boutons +1L, +500 ml, +250 ml et -250 ml.
+- L'hydratation apparaît sur le tableau de bord sous forme de jauge circulaire à côté des pas.
 - Nouvelle section "Recette" accessible depuis la barre de navigation.
 - Les graphiques de l'historique permettent désormais de choisir la période (7 jours à un an) et les détails quotidiens sont affichés du plus récent au plus ancien.
 

@@ -33,7 +33,7 @@ const MacroDetailsModal: React.FC<Props> = ({ user, log, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Détails nutritionnels</h3>
           <button onClick={onClose} className="p-1 text-gray-500 hover:text-red-500">
@@ -60,7 +60,7 @@ const MacroDetailsModal: React.FC<Props> = ({ user, log, onClose }) => {
                 </tr>
                 <tr>
                   <td colSpan={4} className="pb-2">
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-2/3 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div
                         className={`${item.color} h-2 rounded-full`}
                         style={{ width: `${Math.min((item.total / item.goal) * 100, 100)}%` }}
